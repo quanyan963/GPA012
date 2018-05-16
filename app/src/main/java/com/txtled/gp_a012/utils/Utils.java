@@ -42,7 +42,7 @@ import java.util.List;
  */
 
 public class Utils {
-    public static final boolean isLog = true;
+    public static final boolean isLog = false;
     public static String getColorStr(int color) {
         int r = Color.red(color);
         int g = Color.green(color);
