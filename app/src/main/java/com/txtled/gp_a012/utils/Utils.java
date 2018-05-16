@@ -153,6 +153,7 @@ public class Utils {
         lp.alpha = bgAlpha;
         activity.getWindow()
                 .addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
         activity.getWindow().setAttributes(lp);
     }
 
