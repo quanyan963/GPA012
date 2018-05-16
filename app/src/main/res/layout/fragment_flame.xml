@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_2_y"
+        android:paddingLeft="@dimen/dp_16_x"
+        android:paddingRight="@dimen/dp_16_x"
+        android:paddingTop="@dimen/dp_10_y"
+        android:paddingBottom="@dimen/dp_10_y"
+        android:background="@color/gray">
+        <TextView
+            android:id="@+id/tv_switch"
+            style="@style/main_tv"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/iv_item_left"
+            android:drawableLeft="@mipmap/icon_music_pulse"
+            android:drawablePadding="@dimen/dp_8_x"
+            android:text="@string/pulse_to_music" />
+        <Switch
+            android:id="@+id/switch_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:visibility="visible" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/rl_flame_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/v_line"
+        android:background="@mipmap/ic_flameback_small">
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/v_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_2_y"
+        android:background="@color/colorAccent"
+        android:layout_marginBottom="@dimen/dp_16_y"
+        android:layout_above="@+id/il_light"/>
+    <com.txtled.gp_a012.widget.ItemLayout
+        android:id="@+id/il_light"
+        android:layout_above="@+id/il_power"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:ivLeft="@mipmap/ic_flame_light"
+        app:ivRight="@mipmap/ic_flame_dark"
+        android:layout_marginBottom="@dimen/dp_8_y"
+        app:sbMax="3"
+        app:showSeekBar="true">
+
+    </com.txtled.gp_a012.widget.ItemLayout>
+    <com.txtled.gp_a012.widget.ItemLayout
+        android:id="@+id/il_power"
+        android:layout_above="@+id/il_speed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:ivLeft="@mipmap/ic_flame_small"
+        app:ivRight="@mipmap/ic_flame_big"
+        android:layout_marginBottom="@dimen/dp_8_y"
+        app:showSeekBar="true">
+
+    </com.txtled.gp_a012.widget.ItemLayout>
+    <com.txtled.gp_a012.widget.ItemLayout
+        android:id="@+id/il_speed"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:ivLeft="@mipmap/ic_flame_sparse"
+        app:ivRight="@mipmap/ic_flame_compressed"
+        android:layout_marginBottom="@dimen/dp_10_y"
+        app:sbMax="2"
+        app:showSeekBar="true">
+
+    </com.txtled.gp_a012.widget.ItemLayout>
+</RelativeLayout>

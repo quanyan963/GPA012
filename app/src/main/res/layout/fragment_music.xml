@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/rl_top"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:layout_marginTop="@dimen/dp_2_y">-->
+        <!---->
+
+    <!--</RelativeLayout>-->
+
+    <FrameLayout
+        android:id="@+id/fl_top"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="@dimen/dp_2_y"
+        android:background="@color/alpha_light_grey">
+
+        <ImageView
+            android:id="@+id/iv_cover_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@mipmap/ic_music_back"
+            android:scaleType="fitXY" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom">
+            <include
+                android:id="@+id/v_player_mini"
+                layout="@layout/player_top" />
+        </RelativeLayout>
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+
+
+        <CheckBox
+            android:id="@+id/cb_cycle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/dp_16_x"
+            android:layout_marginTop="@dimen/dp_10_y"
+            android:background="@drawable/cb_cycle"
+            android:checked="true"
+            android:button="@null" />
+
+        <CheckBox
+            android:id="@+id/cb_random"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/dp_16_x"
+            android:layout_marginTop="@dimen/dp_10_y"
+            android:background="@drawable/cb_random"
+            android:button="@null" />
+
+        <RelativeLayout
+            android:id="@+id/ll_player"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/dp_50_y"
+            android:layout_marginTop="@dimen/dp_28_y"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:padding="@dimen/dp_16_x"
+                android:src="@mipmap/ic_music_front" />
+
+            <com.txtled.gp_a012.widget.CustomTextView
+                android:id="@+id/mtv_count_time"
+                style="@style/main_tv"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="@dimen/dp_8_x"
+                android:layout_toRightOf="@+id/iv_previous"
+                android:textSize="@dimen/dp_14_x" />
+
+            <ImageView
+                android:id="@+id/iv_sb_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingLeft="@dimen/dp_4_x"
+                android:src="@mipmap/ic_music_play" />
+
+            <com.txtled.gp_a012.widget.CircularSeekBar
+                android:id="@+id/csb_round"
+                android:layout_width="@dimen/dp_120_x"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                app:circle_progress_color="@color/yellow_seek_bar"
+                app:circle_stroke_width="@dimen/dp_3_x"
+                app:lock_enabled="false"
+                app:max="100"
+                app:pointer_alpha_onTouch="255"
+                app:pointer_color="@color/yellow_seek_bar"
+                app:pointer_halo_border_width="0dp"
+                app:pointer_halo_color="@color/yellow_seek_bar"
+                app:pointer_halo_color_onTouch="@color/yellow_seek_bar"
+                app:pointer_halo_width="0dp"
+                app:pointer_radius="@dimen/dp_9_x"
+                app:progress="0"
+                app:use_custom_radii="false" />
+
+            <com.txtled.gp_a012.widget.CustomTextView
+                android:id="@+id/mtv_surplus_time"
+                style="@style/main_tv"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="@dimen/dp_8_x"
+                android:layout_toLeftOf="@+id/iv_next"
+                android:textSize="@dimen/dp_14_x" />
+
+            <ImageView
+                android:id="@+id/iv_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:padding="@dimen/dp_16_x"
+                android:src="@mipmap/ic_music_next" />
+        </RelativeLayout>
+
+        <com.txtled.gp_a012.widget.ItemLayout
+            android:id="@+id/il_voice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/dp_10_y"
+            app:ivLeft="@mipmap/ic_music_whisper"
+            app:sbMax="16"
+            app:ivRight="@mipmap/ic_music_loudly"
+            app:sbProgressDrawable="@drawable/seek_bar_yellow"
+            app:sbThumb="@mipmap/ic_music_slider_circle"
+            app:showSeekBar="true"
+            app:viewLineTop="false" />
+
+    </RelativeLayout>
+</LinearLayout>

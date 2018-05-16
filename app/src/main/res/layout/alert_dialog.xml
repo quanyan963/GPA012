@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.txtled.gp_a012.widget.CustomEditText
+        android:id="@+id/et_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_16_x"
+        android:layout_marginRight="@dimen/dp_16_x"
+        android:layout_marginTop="@dimen/dp_8_y"
+
+        android:hint=""/>
+    <!--app:met_baseColor="@color/black"-->
+    <!--app:met_floatingLabel="highlight"-->
+    <!--app:met_maxCharacters="20"-->
+    <!--app:met_primaryColor="@color/yellow_seek_bar"-->
+
+</LinearLayout>

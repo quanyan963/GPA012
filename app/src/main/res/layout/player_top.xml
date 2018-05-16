@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <RelativeLayout
+        android:id="@+id/rl_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_2_y"
+        android:background="@color/gray">
+        <ImageView
+            android:id="@+id/iv_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:paddingTop="@dimen/dp_10_y"
+            android:paddingBottom="@dimen/dp_10_y"
+            android:paddingLeft="@dimen/dp_16_x"
+            android:paddingRight="@dimen/dp_16_x"
+            android:src="@mipmap/ic_home_play_btn" />
+
+        <com.txtled.gp_a012.widget.CustomTextView
+            android:id="@+id/tv_music_name"
+            style="@style/main_tv"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/dp_4_y"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:ellipsize="marquee"
+            android:scrollHorizontally="true"
+            android:focusableInTouchMode="true"
+            android:focusable="true"
+            android:singleLine="true"
+            android:textSize="@dimen/dp_14_x"
+            android:maxEms="8"
+            android:text="@string/song" />
+
+        <com.txtled.gp_a012.widget.CustomTextView
+            android:id="@+id/tv_music_player"
+            style="@style/main_tv"
+            android:layout_below="@+id/tv_music_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dp_4_y"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:ellipsize="marquee"
+            android:scrollHorizontally="true"
+            android:focusableInTouchMode="true"
+            android:focusable="true"
+            android:singleLine="true"
+            android:maxEms="8"
+            android:text="@string/singer"
+            android:textSize="@dimen/dp_12_x" />
+
+        <ImageView
+            android:id="@+id/iv_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_alignParentRight="true"
+            android:paddingTop="@dimen/dp_10_y"
+            android:paddingBottom="@dimen/dp_10_y"
+            android:paddingLeft="@dimen/dp_16_x"
+            android:paddingRight="@dimen/dp_16_x"
+            android:src="@mipmap/ic_home_rightmenu" />
+    </RelativeLayout>
+
+</RelativeLayout>

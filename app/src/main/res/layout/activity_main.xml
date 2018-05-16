@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/ic_home_back"
+    android:id="@+id/dl_main"
+    tools:context=".main.MainActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/layout_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <include
+                android:id="@+id/appbar"
+                layout="@layout/toolbar" />
+
+            <include layout="@layout/player_top" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/frame_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/layout_radio_group"
+            android:layout_below="@+id/layout_top" />
+
+        <RelativeLayout
+            android:id="@+id/layout_clock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_top"
+            android:layout_marginTop="@dimen/dp_6_y">
+
+            <!--<include layout="@layout/clock_top" />-->
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_54_y"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <RadioGroup
+                android:id="@+id/radio_group_bottom"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:orientation="horizontal">
+
+                <com.txtled.gp_a012.widget.CustomRButton
+                    android:id="@+id/rb_music"
+                    style="@style/nav_rb"
+                    android:drawableTop="@drawable/tabar_music" />
+
+                <com.txtled.gp_a012.widget.CustomRButton
+                    android:id="@+id/rb_flame"
+                    style="@style/nav_rb"
+                    android:drawableTop="@drawable/tabar_flame" />
+
+            </RadioGroup>
+            <com.txtled.gp_a012.widget.CustomButton
+                android:id="@+id/rb_setting"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                style="@style/nav_rb"
+                android:drawableTop="@mipmap/ic_tabar_setting"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav"
+        android:layout_gravity="right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:headerLayout="@layout/header_right"
+        android:background="@mipmap/ic_setting_backview">
+
+    </android.support.design.widget.NavigationView>
+</android.support.v4.widget.DrawerLayout>

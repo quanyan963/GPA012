@@ -1,0 +1,91 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/gray</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="ToolbarPopupTheme" parent="@style/ThemeOverlay.AppCompat.Dark">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:colorBackground">@android:color/black</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="overlapAnchor">false</item>
+    </style>
+
+    <style name="view_line_menu">
+        <item name="android:layout_height">@dimen/dp_2_y</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginLeft">@dimen/dp_16_x</item>
+        <item name="android:layout_marginRight">@dimen/dp_16_x</item>
+        <item name="android:background">@mipmap/ic_setting_line</item>
+    </style>
+
+    <style name="view_line_main" parent="@style/view_line_menu">
+        <item name="android:layout_height">@dimen/dp_1_y</item>
+        <item name="android:background">@mipmap/ic_setting_line</item>
+    </style>
+
+    <style name="menu_rb">
+        <item name="android:button">@null</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:background">@null</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textColor">@drawable/tv_text_color</item>
+        <item name="android:textSize">@dimen/dp_16_x</item>
+        <item name="android:drawablePadding">@dimen/dp_16_x</item>
+    </style>
+
+    <style name="nav_rb">
+        <item name="android:button">@null</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:background">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:drawablePadding">-16dp</item>
+        <item name="android:textColor">@drawable/rb_text_color</item>
+        <item name="android:textSize">@dimen/dp_16_x</item>
+    </style>
+
+    <style name="main_tv">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/dp_16_x</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@drawable/tv_text_color</item>
+    </style>
+
+    <style name="seek_bar_yellow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:maxHeight">@dimen/dp_3_y</item>
+        <item name="android:minHeight">@dimen/dp_3_y</item>
+        <item name="android:max">100</item>
+        <item name="android:splitTrack">false</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:thumb">@mipmap/ic_music_slider_circle</item>
+        <item name="android:progressDrawable">@drawable/seek_bar_yellow</item>
+    </style>
+
+    <!--<style name="pick_view">-->
+        <!--<item name="android:layout_width">match_parent</item>-->
+        <!--<item name="android:layout_height">@dimen/dp_180_y</item>-->
+        <!--<item name="android:max">100</item>-->
+        <!--<item name="canLoop">false</item>-->
+        <!--<item name="centerTextColor">@color/white</item>-->
+        <!--<item name="drawItemCount">7</item>-->
+        <!--<item name="textSize">@dimen/dp_18_x</item>-->
+        <!--<item name="topBottomTextColor">@color/light_grey</item>-->
+    <!--</style>-->
+
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">@dimen/dp_16_x</item>
+    </style>
+
+</resources>

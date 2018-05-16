@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.txtled.gp_a012.widget.CustomTextView
+            android:layout_width="match_parent"
+            style="@style/main_tv"
+            android:id="@+id/il_title"
+            android:layout_height="@dimen/dp_70_y"
+            android:gravity="center"
+            android:text="@string/setting"/>
+        <ImageView
+            android:id="@+id/head_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_setting_back"
+            android:layout_centerInParent="true"
+            android:layout_alignParentLeft="true"
+            android:paddingLeft="@dimen/dp_16_x"
+            android:paddingTop="@dimen/dp_10_y"
+            android:paddingBottom="@dimen/dp_10_y"
+            android:paddingRight="@dimen/dp_16_x"/>
+    </RelativeLayout>
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/dp_1_y"-->
+        <!--android:layout_marginTop="@dimen/dp_30_y"-->
+        <!--android:layout_marginLeft="@dimen/dp_16_x"-->
+        <!--style="@style/view_line_main"/>-->
+    <com.txtled.gp_a012.widget.ItemLayout
+        android:id="@+id/il_instruction"
+        android:layout_width="match_parent"
+        style="@style/main_tv"
+        app:viewLineTop="false"
+        app:viewLineBottom="false"
+        app:ivRight="@mipmap/ic_setting_detail"
+        app:textLeft="@string/instruction">
+
+    </com.txtled.gp_a012.widget.ItemLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1_y"
+        android:layout_marginLeft="@dimen/dp_16_x"
+        style="@style/view_line_main"/>
+    <com.txtled.gp_a012.widget.ItemLayout
+        android:id="@+id/il_about"
+        android:layout_width="match_parent"
+        style="@style/main_tv"
+        app:viewLineTop="false"
+        app:viewLineBottom="false"
+        app:ivRight="@mipmap/ic_setting_detail"
+        app:textLeft="@string/about_us">
+
+    </com.txtled.gp_a012.widget.ItemLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1_y"
+        android:layout_marginLeft="@dimen/dp_16_x"
+        style="@style/view_line_main"/>
+
+</LinearLayout>

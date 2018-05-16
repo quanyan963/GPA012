@@ -1,0 +1,61 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.txtled.gp_a012"
+        minSdkVersion 19
+        targetSdkVersion 26
+        versionCode 3
+        versionName "1.0.2"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    greendao {
+        schemaVersion 2
+        daoPackage 'com.txtled.gp_a012.bean.dao'
+        targetGenDir 'src/main/java'
+    }
+
+    productFlavors {
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    //黄油刀
+    compile 'com.google.dagger:dagger:2.0.2'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.0.2'
+    compile 'com.jakewharton:butterknife:8.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.2.1'
+    //rx
+    compile 'io.reactivex.rxjava2:rxjava:2.1.2'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    //event bus
+    compile 'org.greenrobot:eventbus:3.0.0'
+    //ble
+    compile 'com.inuker.bluetooth:library:1.4.0'
+    implementation files('libs/universal-image-loader-1.9.5.jar')
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+    //权限
+    compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
+    //recyclerView
+    compile 'com.yanzhenjie:recyclerview-swipe:1.0.4'
+    //sql
+    compile 'org.greenrobot:greendao:3.2.2'
+    compile 'org.greenrobot:greendao-generator:3.2.2'
+
+    compile 'com.android.support:design:26.+'
+}
