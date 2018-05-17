@@ -330,8 +330,8 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
         isConn = true;
         hideSnackBar();
 
-        hideProgress();
-        musicInterface.initRead();
+        //hideProgress();
+        //musicInterface.initRead();
 
         toolbar.setNavigationIcon(R.mipmap.ic_state_connect);
     }

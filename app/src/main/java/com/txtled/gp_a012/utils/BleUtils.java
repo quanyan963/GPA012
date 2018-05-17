@@ -13,6 +13,7 @@ import java.util.TimeZone;
 
 public class BleUtils {
     public static final String BLE_NAME = "AR";
+    public static final String BLE_NAME_MAC = "mi";
     public static final String SERVICE = "ffe0";
     public static final String SEMICOLON = ";";
     public static final String HEAD = "A005+";//AT

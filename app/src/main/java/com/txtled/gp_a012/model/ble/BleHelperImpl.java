@@ -97,12 +97,12 @@ public class BleHelperImpl implements BleHelper {
                                             Object[]) null);
                                     if (isConnected) {
                                         Utils.Logger(TAG,"phone connected ble mac:",device.getAddress());
-                                        BluetoothDevice romoteDevice = adapter.getRemoteDevice(device.getAddress());
-                                        socket = romoteDevice
-                                                .createRfcommSocketToServiceRecord(UUID.fromString(SPP_UUID));
-                                        connSppBle(socket,onScanBleListener);
+//                                        BluetoothDevice romoteDevice = adapter.getRemoteDevice(device.getAddress());
+//                                        socket = romoteDevice
+//                                                .createRfcommSocketToServiceRecord(UUID.fromString(SPP_UUID));
+//                                        connSppBle(socket,onScanBleListener);
                                         //ble蓝牙连接
-                                        //searchBleByAddress(device.getAddress(), onScanBleListener);
+                                        searchBleByAddress(device.getAddress(), onScanBleListener);
                                     }
                                 }
                             }
@@ -118,10 +118,11 @@ public class BleHelperImpl implements BleHelper {
                     } catch (NoSuchMethodException | IllegalAccessException |
                             InvocationTargetException e) {
                         e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        //spp蓝牙连接异常
                     }
+//                    catch (IOException e) {
+//                        e.printStackTrace();
+//                        //spp蓝牙连接异常
+//                    }
                 }else {
                     onScanBleListener.onDisOpenGPS();
                 }
@@ -157,13 +158,13 @@ public class BleHelperImpl implements BleHelper {
                 Utils.Logger(TAG,"scan ble name",device.getName());
                 Utils.Logger(TAG,"scan ble mac",device.getAddress());
 
-                if (address.substring(0,7).equals(device.getAddress().
-                        substring(0,7))){
-                    mBleClient.stopSearch();
-
-                    mAddress = device.getAddress();
-                    onScanBleListener.onSuccess();
-                }
+//                if (address.substring(0,7).equals(device.getAddress().
+//                        substring(0,7))){
+//                    mBleClient.stopSearch();
+//
+//                    mAddress = device.getAddress();
+//                    onScanBleListener.onSuccess();
+//                }
 
 
 //                if (!TextUtils.isEmpty(address)) {
@@ -172,11 +173,12 @@ public class BleHelperImpl implements BleHelper {
 //                        mAddress = device.getAddress();
 //                        onScanBleListener.onSuccess();
 //                    }
-//                } else if (device.getName().contains(BleUtils.BLE_NAME)) {
-//                    mBleClient.stopSearch();
-//                    mAddress = device.getAddress();
-//                    onScanBleListener.onSuccess();
-//                }
+//                } else
+                if (device.getName().contains(BleUtils.BLE_NAME_MAC)) {
+                    mBleClient.stopSearch();
+                    mAddress = device.getAddress();
+                    onScanBleListener.onSuccess();
+                }
             }
 
             @Override
@@ -259,69 +261,69 @@ public class BleHelperImpl implements BleHelper {
         int tmpLen = data.length;
         int start = 0;
         int end = 0;
-//        while (tmpLen > 0) {
-//            byte[] sendData = new byte[21];
-//            if (tmpLen >= 20) {
-//                end += 20;
-//                sendData = Arrays.copyOfRange(data, start, end);
-//                start += 20;
-//                tmpLen -= 20;
-//            } else {
-//                end += tmpLen;
-//                sendData = Arrays.copyOfRange(data, start, end);
-//                tmpLen = 0;
-//            }
-//
-//            mBleClient.write(mAddress, mServiceUUID, mSendCharacterUUID, sendData,
-//                    new BleWriteResponse() {
-//                        @Override
-//                        public void onResponse(int code) {
-//
-//                        }
-//                    });
-//
-//        }
-
-        //spp
-        try {
-            OutputStream os = socket.getOutputStream();
-//            byte[] osBytes = etInput.getText().toString().getBytes();
-//            for (int i = 0; i < data.length; i++) {
-//                if (osBytes[i] == 0x0a)
-//                    n++;
-//            }
-//            byte[] osBytesNew = new byte[osBytes.length+n];
-//            n = 0;
-//            for (int i = 0; i < osBytesNew.length; i++) {
-//                //mobile "\n"is 0a,modify 0d 0a then send
-//                if (osBytesNew[i] == 0x0a) {
-//                    osBytesNew[n] = 0x0d;
-//                    n++;
-//                    osBytesNew[n] = 0x0a;
-//                }else {
-//                    osBytesNew[n] = osBytes[i];
-//                }
-//                n++;
-//            }
-            while (tmpLen > 0) {
-                byte[] sendData = new byte[21];
-                if (tmpLen >= 20) {
-                    end += 20;
-                    sendData = Arrays.copyOfRange(data, start, end);
-                    start += 20;
-                    tmpLen -= 20;
-                } else {
-                    end += tmpLen;
-                    sendData = Arrays.copyOfRange(data, start, end);
-                    tmpLen = 0;
-                }
-
-                os.write(sendData);
+        while (tmpLen > 0) {
+            byte[] sendData = new byte[21];
+            if (tmpLen >= 20) {
+                end += 20;
+                sendData = Arrays.copyOfRange(data, start, end);
+                start += 20;
+                tmpLen -= 20;
+            } else {
+                end += tmpLen;
+                sendData = Arrays.copyOfRange(data, start, end);
+                tmpLen = 0;
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            mBleClient.write(mAddress, mServiceUUID, mSendCharacterUUID, sendData,
+                    new BleWriteResponse() {
+                        @Override
+                        public void onResponse(int code) {
+
+                        }
+                    });
+
         }
+
+        //spp
+//        try {
+//            OutputStream os = socket.getOutputStream();
+////            byte[] osBytes = etInput.getText().toString().getBytes();
+////            for (int i = 0; i < data.length; i++) {
+////                if (osBytes[i] == 0x0a)
+////                    n++;
+////            }
+////            byte[] osBytesNew = new byte[osBytes.length+n];
+////            n = 0;
+////            for (int i = 0; i < osBytesNew.length; i++) {
+////                //mobile "\n"is 0a,modify 0d 0a then send
+////                if (osBytesNew[i] == 0x0a) {
+////                    osBytesNew[n] = 0x0d;
+////                    n++;
+////                    osBytesNew[n] = 0x0a;
+////                }else {
+////                    osBytesNew[n] = osBytes[i];
+////                }
+////                n++;
+////            }
+//            while (tmpLen > 0) {
+//                byte[] sendData = new byte[21];
+//                if (tmpLen >= 20) {
+//                    end += 20;
+//                    sendData = Arrays.copyOfRange(data, start, end);
+//                    start += 20;
+//                    tmpLen -= 20;
+//                } else {
+//                    end += tmpLen;
+//                    sendData = Arrays.copyOfRange(data, start, end);
+//                    tmpLen = 0;
+//                }
+//
+//                os.write(sendData);
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
@@ -359,24 +361,24 @@ public class BleHelperImpl implements BleHelper {
 
     @Override
     public void readCommand(final OnReadListener readListener) {
-//        mBleClient.read(mAddress, mServiceUUID, mSendCharacterUUID, new BleReadResponse() {
-//            @Override
-//            public void onResponse(int code, byte[] data) {
-//                if (code == REQUEST_SUCCESS){
-//                    readListener.onRead(data);
-//                }
-//            }
-//        });
+        mBleClient.read(mAddress, mServiceUUID, mSendCharacterUUID, new BleReadResponse() {
+            @Override
+            public void onResponse(int code, byte[] data) {
+                if (code == REQUEST_SUCCESS){
+                    readListener.onRead(data);
+                }
+            }
+        });
 
         //spp
-        try {
-            byte[] read = new byte[21];
-            InputStream inputStream = socket.getInputStream();
-            socket.getInputStream().read(read);
-            readListener.onRead(read);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            byte[] read = new byte[21];
+//            InputStream inputStream = socket.getInputStream();
+//            socket.getInputStream().read(read);
+//            readListener.onRead(read);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
@@ -385,13 +387,13 @@ public class BleHelperImpl implements BleHelper {
         mBleClient.unregisterConnectStatusListener(mAddress,listener);
         listener = null;
 
-        try {
-            socket.close();
-            socket = null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            //Toast.makeText(this, "socket close failed", Toast.LENGTH_SHORT).show();
-        }
-        return;
+//        try {
+//            socket.close();
+//            socket = null;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            //Toast.makeText(this, "socket close failed", Toast.LENGTH_SHORT).show();
+//        }
+//        return;
     }
 }
