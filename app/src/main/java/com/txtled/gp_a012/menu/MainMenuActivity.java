@@ -372,6 +372,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
         }else {
             musicInterface.initRead();
             presenter.getBleConnectedStatue();
+
         }
     }
 
