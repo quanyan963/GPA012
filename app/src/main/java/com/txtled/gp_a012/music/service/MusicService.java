@@ -93,14 +93,14 @@ public class MusicService extends Service implements BleHelper.OnReadListener{
                 }
                 break;
             case REQUEST_REQ://返回所有数据
-                String[] allData = mData.substring(8,mData.length()-1).split(",");
-                mDataManagerModel.updateFlame(LIGHT_STATUE, Integer.parseInt(allData[0],16));
-                mDataManagerModel.updateFlame(LIGHT, Integer.parseInt(allData[1],16)-1);
-                mDataManagerModel.updateFlame(POWER, Integer.parseInt(allData[2],16)-1);
-                mDataManagerModel.updateFlame(TO_MUSIC, Integer.parseInt(allData[3],16)-1);
-                mDataManagerModel.updateFlame(SPEED,Integer.parseInt(allData[4],16));
-                mDataManagerModel.setMainVolume(Integer.parseInt(allData[5],16));
-                EventBus.getDefault().post(new PlayVolumeEvent(Integer.parseInt(allData[5],16)));
+                String allData = mData.substring(8,mData.length()-1);
+                mDataManagerModel.updateFlame(LIGHT_STATUE, Integer.parseInt(allData.substring(0,2),16));
+                mDataManagerModel.updateFlame(LIGHT, Integer.parseInt(allData.substring(2,4),16)-1);
+                mDataManagerModel.updateFlame(POWER, Integer.parseInt(allData.substring(4,6),16)-1);
+                mDataManagerModel.updateFlame(TO_MUSIC, Integer.parseInt(allData.substring(6,8),16)-1);
+                mDataManagerModel.updateFlame(SPEED,Integer.parseInt(allData.substring(8,10),16));
+//                mDataManagerModel.setMainVolume(Integer.parseInt(allData[5],16));
+//                EventBus.getDefault().post(new PlayVolumeEvent(Integer.parseInt(allData[5],16)));
 
                 break;
             case OPEN_CLOSE://开灯

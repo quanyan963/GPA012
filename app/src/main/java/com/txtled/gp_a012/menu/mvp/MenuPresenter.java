@@ -126,40 +126,41 @@ public class MenuPresenter extends RxPresenter<MenuContract.View> implements Men
 
             @Override
             public void onSuccess() {
-                mDataManagerModel.isBleConnected(new BleConnListener() {
-                    @Override
-                    public void onConn() {
-                        view.setBleStatue(true);
-                    }
-
-                    @Override
-                    public void onDisConn() {
-                        view.setBleStatue(false);
-                        unConn();
-                    }
-                });
-
-                mDataManagerModel.connBle(new BleHelper.OnConnBleListener() {
-                    @Override
-                    public void onSuccess() {
-                        mDataManagerModel.notifyBle();
-                        addSubscribe(Flowable.timer(DELAY, TimeUnit.MILLISECONDS)
-                                .compose(RxUtil.<Long>rxSchedulerHelper())
-                                .subscribe(new Consumer<Long>() {
-                                    @Override
-                                    public void accept(Long aLong) throws Exception {
-                                        //setBleListener();
-
-                                        view.connected();
-                                    }
-                                }));
-                    }
-
-                    @Override
-                    public void onFailure() {
-                        view.connFailure();
-                    }
-                });
+                view.connected();
+//                mDataManagerModel.isBleConnected(new BleConnListener() {
+//                    @Override
+//                    public void onConn() {
+//                        view.setBleStatue(true);
+//                    }
+//
+//                    @Override
+//                    public void onDisConn() {
+//                        view.setBleStatue(false);
+//                        unConn();
+//                    }
+//                });
+//
+//                mDataManagerModel.connBle(new BleHelper.OnConnBleListener() {
+//                    @Override
+//                    public void onSuccess() {
+//                        mDataManagerModel.notifyBle();
+//                        addSubscribe(Flowable.timer(DELAY, TimeUnit.MILLISECONDS)
+//                                .compose(RxUtil.<Long>rxSchedulerHelper())
+//                                .subscribe(new Consumer<Long>() {
+//                                    @Override
+//                                    public void accept(Long aLong) throws Exception {
+//                                        //setBleListener();
+//
+//                                        view.connected();
+//                                    }
+//                                }));
+//                    }
+//
+//                    @Override
+//                    public void onFailure() {
+//                        view.connFailure();
+//                    }
+//                });
             }
 
             @Override
