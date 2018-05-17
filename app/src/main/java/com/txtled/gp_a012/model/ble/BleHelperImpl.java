@@ -42,8 +42,8 @@ import static com.inuker.bluetooth.library.Constants.STATUS_DISCONNECTED;
 
 public class BleHelperImpl implements BleHelper {
     public static final String TAG = BleHelperImpl.class.getSimpleName();
-    public static final int DURATION = 10000;
-    public static final int TIMES = 3;
+    public static final int DURATION = 20000;
+    public static final int TIMES = 1;
     private BluetoothClient mBleClient;
     private SearchRequest mRequest;
     private BleConnectOptions mOptions;
@@ -52,6 +52,7 @@ public class BleHelperImpl implements BleHelper {
     private UUID mSendCharacterUUID;
     private UUID mNotifyCharacterUUID;
     private BleConnectStatusListener listener;
+    private boolean conn;
 
     @Inject
     public BleHelperImpl() {
@@ -67,7 +68,7 @@ public class BleHelperImpl implements BleHelper {
     }
 
     @Override
-    public void scanBle(Activity activity, boolean isSpecified, OnScanBleListener onScanBleListener) {
+    public void scanBle(Activity activity, boolean isSpecified, OnScanBleListener onScanBleListener, final OnConnBleListener onConnBleListener) {
         if (mBleClient.isBleSupported()) {
             if (mBleClient.isBluetoothOpened()) {
                 if (Utils.isLocationEnable(activity)){
@@ -91,7 +92,7 @@ public class BleHelperImpl implements BleHelper {
                                             Object[]) null);
                                     if (isConnected) {
                                         Utils.Logger(TAG,"phone connected ble mac:",device.getAddress());
-                                        searchBleByAddress(device.getAddress(), onScanBleListener);
+                                        searchBleByAddress(device.getAddress(), onScanBleListener,onConnBleListener);
                                     }
                                 }
                             }
@@ -101,7 +102,7 @@ public class BleHelperImpl implements BleHelper {
                             if (isSpecified) {
                                 onScanBleListener.onDisOpenDevice();
                             } else {
-                                searchBleByAddress("", onScanBleListener);
+                                searchBleByAddress("", onScanBleListener,onConnBleListener);
                             }
                         }
                     } catch (NoSuchMethodException | IllegalAccessException |
@@ -119,26 +120,32 @@ public class BleHelperImpl implements BleHelper {
         }
     }
 
-    private void searchBleByAddress(final String address, final OnScanBleListener onScanBleListener) {
-        mBleClient.search(mRequest, new SearchResponse() {
-            @Override
-            public void onSearchStarted() {
-                onScanBleListener.onStart();
-            }
-
-            @Override
-            public void onDeviceFounded(final SearchResult device) {
-                Utils.Logger(TAG,"scan ble name",device.getName());
-                Utils.Logger(TAG,"scan ble mac",device.getAddress());
-
-                if (address.substring(0,7).equals(device.getAddress().
-                        substring(0,7))){
-                    mBleClient.stopSearch();
-
-                    mAddress = device.getAddress();
-                    onScanBleListener.onSuccess();
+    private void searchBleByAddress(final String address, final OnScanBleListener onScanBleListener, final OnConnBleListener onConnBleListener) {
+        if (!conn){
+            mBleClient.search(mRequest, new SearchResponse() {
+                @Override
+                public void onSearchStarted() {
+                    onScanBleListener.onStart();
                 }
 
+                @Override
+                public void onDeviceFounded(final SearchResult device) {
+                    Utils.Logger(TAG,"scan ble name",device.getName());
+                    Utils.Logger(TAG,"scan ble mac",device.getAddress());
+                    if (device.getName().contains("mi")){
+                        if (address.substring(8).equals(device.getAddress().
+                                substring(8))){
+                            mBleClient.stopSearch();
+
+                            if (!conn){
+                                mAddress = device.getAddress();
+                                onScanBleListener.onSuccess();
+                                //connBle(onConnBleListener);
+                                Utils.Logger("find:---","",device.getAddress().toString());
+                                conn = true;
+                            }
+                        }
+                    }
 
 //                if (!TextUtils.isEmpty(address)) {
 //                    if (device.getAddress().equalsIgnoreCase(getMacAddress(address))) {
@@ -151,18 +158,22 @@ public class BleHelperImpl implements BleHelper {
 //                    mAddress = device.getAddress();
 //                    onScanBleListener.onSuccess();
 //                }
-            }
+                }
 
-            @Override
-            public void onSearchStopped() {
-                onScanBleListener.onScanFailure();
-            }
+                @Override
+                public void onSearchStopped() {
+                    onScanBleListener.onScanFailure();
+                }
 
-            @Override
-            public void onSearchCanceled() {
+                @Override
+                public void onSearchCanceled() {
 
-            }
-        });
+                }
+            });
+        }else {
+            mBleClient.stopSearch();
+        }
+
     }
 
     private String getMacAddress(String macAddress) {
@@ -174,41 +185,23 @@ public class BleHelperImpl implements BleHelper {
 
     @Override
     public void connBle(final OnConnBleListener onConnBleListener) {
-        mBleClient.stopSearch();
         mBleClient.connect(mAddress, mOptions, new BleConnectResponse() {
             @Override
             public void onResponse(int code, BleGattProfile profile) {
+                Utils.Logger("conncode:---","",code+"");
                 if (code == REQUEST_SUCCESS) {
                     List<BleGattService> serviceList = profile.getServices();
                     for (BleGattService service : serviceList) {
                         Utils.Logger("service","UUID",service.getUUID().toString());
-//                        List<BleGattCharacter> characters = service.getCharacters();
-//                        for (BleGattCharacter character : characters) {
-//                            //save uuid
-//                            Log.d("service", "Permission: "+character.getPermissions());
-//                            Log.d("service", "Property: "+character.getProperty());
-//                            Log.d("service", "Uuid: "+character.getUuid());
-//                            }
-//                        }
                         if (service.getUUID().toString().contains(BleUtils.SERVICE)) {
                             List<BleGattCharacter> characters = service.getCharacters();
                             for (BleGattCharacter character : characters) {
                                 //save uuid
-//                                Log.d("service", "Permission: "+character.getPermissions());
-//                                Log.d("service", "Property: "+character.getProperty());
-//                                Log.d("service", "Descriptors: "+character.getDescriptors());
                                 mServiceUUID = service.getUUID();
                                 mSendCharacterUUID = character.getUuid();
                                 mNotifyCharacterUUID = character.getUuid();
                                 onConnBleListener.onSuccess();
-//                                if (character.getUuid().toString().contains(BleUtils.
-//                                        SEND_CHARACTERS)) {
-//                                    mSendCharacterUUID = character.getUuid();
-//                                } else if (character.getUuid().toString().contains(BleUtils.
-//                                        NOTIFY_CHARACTERS)) {
-//                                    mNotifyCharacterUUID = character.getUuid();
-//                                    onConnBleListener.onSuccess();
-//                                }
+                                Utils.Logger("conn:---","","sucess");
                             }
                         }
                     }
@@ -258,12 +251,13 @@ public class BleHelperImpl implements BleHelper {
     }
 
     @Override
-    public void notifyBle() {
+    public void notifyBle(final OnReadListener readListener) {
         if (mServiceUUID != null && mNotifyCharacterUUID != null) {
             mBleClient.notify(mAddress, mServiceUUID, mNotifyCharacterUUID, new BleNotifyResponse() {
                 @Override
                 public void onNotify(UUID service, UUID character, byte[] value) {
                     Utils.Logger(TAG,"BLE Notify",new String(value));
+                    readListener.onRead(value);
                 }
 
                 @Override

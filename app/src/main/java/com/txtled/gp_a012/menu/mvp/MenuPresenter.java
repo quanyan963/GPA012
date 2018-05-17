@@ -8,6 +8,8 @@ import com.txtled.gp_a012.base.CommonSubscriber;
 import com.txtled.gp_a012.base.RxPresenter;
 import com.txtled.gp_a012.bean.Flame;
 import com.txtled.gp_a012.bean.Song;
+import com.txtled.gp_a012.bean.event.FlameEvent;
+import com.txtled.gp_a012.bean.event.PlayVolumeEvent;
 import com.txtled.gp_a012.model.DataManagerModel;
 import com.txtled.gp_a012.model.ble.BleHelper;
 import com.txtled.gp_a012.model.operate.OperateHelper;
@@ -17,6 +19,7 @@ import com.txtled.gp_a012.utils.RxUtil;
 import com.txtled.gp_a012.utils.Utils;
 import com.txtled.gp_a012.widget.listener.BleConnListener;
 
+import org.greenrobot.eventbus.EventBus;
 import org.reactivestreams.Publisher;
 
 import java.util.ArrayList;
@@ -26,11 +29,20 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
 import static com.txtled.gp_a012.base.BaseActivity.TAG;
+import static com.txtled.gp_a012.utils.BleUtils.OPEN_CLOSE;
+import static com.txtled.gp_a012.utils.BleUtils.POWER_REQ;
+import static com.txtled.gp_a012.utils.BleUtils.REQUEST_REQ;
+import static com.txtled.gp_a012.utils.Constants.LIGHT;
+import static com.txtled.gp_a012.utils.Constants.LIGHT_STATUE;
+import static com.txtled.gp_a012.utils.Constants.POWER;
+import static com.txtled.gp_a012.utils.Constants.SPEED;
+import static com.txtled.gp_a012.utils.Constants.TO_MUSIC;
 
 /**
  * Created by KomoriWu
@@ -118,7 +130,7 @@ public class MenuPresenter extends RxPresenter<MenuContract.View> implements Men
     }
 
     private void scanBle(final Activity activity, boolean isSpecified) {
-        mDataManagerModel.scanBle(activity,isSpecified, new BleHelper.OnScanBleListener() {
+        mDataManagerModel.scanBle(activity, isSpecified, new BleHelper.OnScanBleListener() {
             @Override
             public void onStart() {
                 view.startAnim();
@@ -126,6 +138,29 @@ public class MenuPresenter extends RxPresenter<MenuContract.View> implements Men
 
             @Override
             public void onSuccess() {
+
+                addSubscribe(Flowable.timer(DELAY, TimeUnit.MILLISECONDS)
+                        .compose(RxUtil.<Long>rxSchedulerHelper())
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<Long>() {
+                            @Override
+                            public void accept(Long aLong) throws Exception {
+                                //setBleListener();
+                                mDataManagerModel.connBle(new BleHelper.OnConnBleListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        view.connected();
+                                    }
+
+                                    @Override
+                                    public void onFailure() {
+                                        view.connFailure();
+                                    }
+                                });
+                            }
+                        }));
+
+
                 mDataManagerModel.isBleConnected(new BleConnListener() {
                     @Override
                     public void onConn() {
@@ -138,28 +173,9 @@ public class MenuPresenter extends RxPresenter<MenuContract.View> implements Men
                         unConn();
                     }
                 });
+                Utils.Logger("isConn:---","","sucess");
 
-                mDataManagerModel.connBle(new BleHelper.OnConnBleListener() {
-                    @Override
-                    public void onSuccess() {
-                        mDataManagerModel.notifyBle();
-                        addSubscribe(Flowable.timer(DELAY, TimeUnit.MILLISECONDS)
-                                .compose(RxUtil.<Long>rxSchedulerHelper())
-                                .subscribe(new Consumer<Long>() {
-                                    @Override
-                                    public void accept(Long aLong) throws Exception {
-                                        //setBleListener();
 
-                                        view.connected();
-                                    }
-                                }));
-                    }
-
-                    @Override
-                    public void onFailure() {
-                        view.connFailure();
-                    }
-                });
             }
 
             @Override
@@ -172,8 +188,8 @@ public class MenuPresenter extends RxPresenter<MenuContract.View> implements Men
                 //scanBle(false);
                 if (!mDataManagerModel.getInitDialog()) {
                     view.showOpenDeviceDialog();
-                }else {
-                    scanBle(activity,false);
+                } else {
+                    scanBle(activity, false);
                 }
             }
 
@@ -190,6 +206,28 @@ public class MenuPresenter extends RxPresenter<MenuContract.View> implements Men
             @Override
             public void onDisSupported() {
                 view.onShowError();
+            }
+        }, new BleHelper.OnConnBleListener() {
+            @Override
+            public void onSuccess() {
+
+                Utils.Logger("Connected:---","","on");
+                view.connected();
+//                addSubscribe(Flowable.timer(DELAY, TimeUnit.MILLISECONDS)
+//                        .compose(RxUtil.<Long>rxSchedulerHelper())
+//                        .subscribe(new Consumer<Long>() {
+//                            @Override
+//                            public void accept(Long aLong) throws Exception {
+//                                //setBleListener();
+//                                mDataManagerModel.notifyBle();
+//                                view.connected();
+//                            }
+//                        }));
+            }
+
+            @Override
+            public void onFailure() {
+                view.connFailure();
             }
         });
     }

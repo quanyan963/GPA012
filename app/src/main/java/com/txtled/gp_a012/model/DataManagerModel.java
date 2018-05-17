@@ -35,8 +35,8 @@ public class DataManagerModel implements DBHelper,BleHelper,OperateHelper,Prefer
     }
 
     @Override
-    public void scanBle(Activity activity, boolean isSpecified, OnScanBleListener onScanBleListener) {
-        mBleHelper.scanBle(activity,isSpecified,onScanBleListener);
+    public void scanBle(Activity activity, boolean isSpecified, OnScanBleListener onScanBleListener, OnConnBleListener onConnBleListener) {
+        mBleHelper.scanBle(activity,isSpecified,onScanBleListener,onConnBleListener);
     }
 
     @Override
@@ -50,8 +50,8 @@ public class DataManagerModel implements DBHelper,BleHelper,OperateHelper,Prefer
     }
 
     @Override
-    public void notifyBle() {
-        mBleHelper.notifyBle();
+    public void notifyBle(final OnReadListener readListener) {
+        mBleHelper.notifyBle(readListener);
     }
 
     @Override

@@ -42,7 +42,7 @@ import java.util.List;
  */
 
 public class Utils {
-    public static final boolean isLog = false;
+    public static final boolean isLog = true;
     public static String getColorStr(int color) {
         int r = Color.red(color);
         int g = Color.green(color);
@@ -299,6 +299,6 @@ public class Utils {
     public static void Logger(String TAG, String type, String value){
         if (!isLog)
             return;
-        Log.d(TAG, type+":------"+value);
+        Log.i(TAG, type+":------"+value);
     }
 }

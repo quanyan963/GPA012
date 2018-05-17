@@ -73,85 +73,85 @@ public class StartPresenter extends RxPresenter<StartContract.View> implements S
     }
 
     private void scanBle(final Activity activity, boolean isSpecified) {
-        mDataManagerModel.scanBle(activity,isSpecified, new BleHelper.OnScanBleListener() {
-            @Override
-            public void onStart() {
-                view.startAnim();
-            }
-
-            @Override
-            public void onSuccess() {
-                mDataManagerModel.connBle(new BleHelper.OnConnBleListener() {
-                    @Override
-                    public void onSuccess() {
-                        mDataManagerModel.notifyBle();
-                        addSubscribe(Flowable.timer(DELAY, TimeUnit.MILLISECONDS)
-                                .compose(RxUtil.<Long>rxSchedulerHelper())
-                                .doOnSubscribe(new Consumer<Subscription>() {
-                                    @Override
-                                    public void accept(Subscription subscription) throws Exception {
-                                        mDataManagerModel.isBleConnected(new BleConnListener() {
-                                            @Override
-                                            public void onConn() {
-                                                mDataManagerModel.writeCommand(BleUtils.getBleStatue());
-                                                //view.setBleStatue(true);
-                                            }
-
-                                            @Override
-                                            public void onDisConn() {
-                                                //view.setBleStatue(false);
-                                                mDataManagerModel.writeCommand(BleUtils.getBleStatue());
-                                                unConn();
-                                            }
-                                        });
-                                        view.connected();
-                                    }
-                                })
-                                .subscribe(new Consumer<Long>() {
-                                    @Override
-                                    public void accept(Long aLong) throws Exception {
-                                        view.toMainView();
-                                    }
-                                }));
-                    }
-
-                    @Override
-                    public void onFailure() {
-                        view.connFailure();
-                    }
-                });
-            }
-
-            @Override
-            public void onScanFailure() {
-                view.scanFailure();
-            }
-
-            @Override
-            public void onDisOpenDevice() {
-                //scanBle(false);
-                if (!mDataManagerModel.getInitDialog()) {
-                    view.showOpenDeviceDialog();
-                }else {
-                    scanBle(activity,false);
-                }
-            }
-
-            @Override
-            public void onDisOpenBle() {
-                view.onShowOpenBleDialog();
-            }
-
-            @Override
-            public void onDisOpenGPS() {
-                view.onShowOpenGPSDialog();
-            }
-
-            @Override
-            public void onDisSupported() {
-                view.onShowError();
-            }
-        });
+//        mDataManagerModel.scanBle(activity,isSpecified, new BleHelper.OnScanBleListener() {
+//            @Override
+//            public void onStart() {
+//                view.startAnim();
+//            }
+//
+//            @Override
+//            public void onSuccess() {
+//                mDataManagerModel.connBle(new BleHelper.OnConnBleListener() {
+//                    @Override
+//                    public void onSuccess() {
+//                        mDataManagerModel.notifyBle();
+//                        addSubscribe(Flowable.timer(DELAY, TimeUnit.MILLISECONDS)
+//                                .compose(RxUtil.<Long>rxSchedulerHelper())
+//                                .doOnSubscribe(new Consumer<Subscription>() {
+//                                    @Override
+//                                    public void accept(Subscription subscription) throws Exception {
+//                                        mDataManagerModel.isBleConnected(new BleConnListener() {
+//                                            @Override
+//                                            public void onConn() {
+//                                                mDataManagerModel.writeCommand(BleUtils.getBleStatue());
+//                                                //view.setBleStatue(true);
+//                                            }
+//
+//                                            @Override
+//                                            public void onDisConn() {
+//                                                //view.setBleStatue(false);
+//                                                mDataManagerModel.writeCommand(BleUtils.getBleStatue());
+//                                                unConn();
+//                                            }
+//                                        });
+//                                        view.connected();
+//                                    }
+//                                })
+//                                .subscribe(new Consumer<Long>() {
+//                                    @Override
+//                                    public void accept(Long aLong) throws Exception {
+//                                        view.toMainView();
+//                                    }
+//                                }));
+//                    }
+//
+//                    @Override
+//                    public void onFailure() {
+//                        view.connFailure();
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onScanFailure() {
+//                view.scanFailure();
+//            }
+//
+//            @Override
+//            public void onDisOpenDevice() {
+//                //scanBle(false);
+//                if (!mDataManagerModel.getInitDialog()) {
+//                    view.showOpenDeviceDialog();
+//                }else {
+//                    scanBle(activity,false);
+//                }
+//            }
+//
+//            @Override
+//            public void onDisOpenBle() {
+//                view.onShowOpenBleDialog();
+//            }
+//
+//            @Override
+//            public void onDisOpenGPS() {
+//                view.onShowOpenGPSDialog();
+//            }
+//
+//            @Override
+//            public void onDisSupported() {
+//                view.onShowError();
+//            }
+//        });
     }
 
     private void initSql() {

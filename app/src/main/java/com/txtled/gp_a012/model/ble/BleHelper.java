@@ -9,13 +9,13 @@ import com.txtled.gp_a012.widget.listener.BleConnListener;
  */
 
 public interface BleHelper {
-    void scanBle(Activity activity, boolean isSpecified, OnScanBleListener onScanBleListener);
+    void scanBle(Activity activity, boolean isSpecified, OnScanBleListener onScanBleListener, OnConnBleListener onConnBleListener);
 
     void connBle(OnConnBleListener onConnBleListener);
 
     void writeCommand(String command);
 
-    void notifyBle();
+    void notifyBle(OnReadListener readListener);
 
     void isBleConnected(BleConnListener bleListener);
 

@@ -224,7 +224,45 @@ public class MusicService extends Service implements BleHelper.OnReadListener{
 
         @Override
         public void initRead() {
-            mDataManagerModel.readCommand(MusicService.this);
+            mDataManagerModel.notifyBle(new BleHelper.OnReadListener() {
+                @Override
+                public void onRead(byte[] data) {
+                    String mData = data.toString();
+
+                    switch (mData.substring(5,6)){
+                        case POWER_REQ:
+                            String num = mData.substring(6,8);
+                            if (num.equals("03")){//脉动音乐
+                                mDataManagerModel.updateFlame(TO_MUSIC,1);
+                                EventBus.getDefault().post(new FlameEvent(TO_MUSIC,1));
+                            }else {//1~2
+                                mDataManagerModel.updateFlame(LIGHT, Integer.parseInt(num)-1);
+                                EventBus.getDefault().post(new FlameEvent(LIGHT,Integer
+                                        .parseInt(num)-1));
+                            }
+                            break;
+                        case REQUEST_REQ://返回所有数据
+                            String allData = mData.substring(8,mData.length()-1);
+                            mDataManagerModel.updateFlame(LIGHT_STATUE, Integer.parseInt(allData.substring(0,2),16));
+                            mDataManagerModel.updateFlame(LIGHT, Integer.parseInt(allData.substring(2,4),16)-1);
+                            mDataManagerModel.updateFlame(POWER, Integer.parseInt(allData.substring(4,6),16)-1);
+                            mDataManagerModel.updateFlame(TO_MUSIC, Integer.parseInt(allData.substring(6,8),16)-1);
+                            mDataManagerModel.updateFlame(SPEED,Integer.parseInt(allData.substring(8,10),16));
+//                            mDataManagerModel.setMainVolume(Integer.parseInt(allData[5],16));
+//                            EventBus.getDefault().post(new PlayVolumeEvent(Integer.parseInt(allData[5],16)));
+
+                            break;
+                        case OPEN_CLOSE://开灯
+                            String statue = mData.substring(6,8);
+                            mDataManagerModel.updateFlame(LIGHT_STATUE,Integer.parseInt(statue,16));
+                            EventBus.getDefault().post(new FlameEvent(LIGHT_STATUE,Integer
+                                    .parseInt(statue,16)));
+                            break;
+
+                    }
+                }
+            });
+            //mDataManagerModel.readCommand(MusicService.this);
         }
 
     }

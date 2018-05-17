@@ -329,7 +329,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
     public void connected() {
         isConn = true;
         hideSnackBar();
-        //hideProgress();
+        hideProgress();
         toolbar.setNavigationIcon(R.mipmap.ic_state_connect);
     }
 
@@ -361,18 +361,16 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
     @Override
     public void setBleStatue(boolean isConn) {
         this.isConn = isConn;
-
+        hideProgress();
         //rlPlayer.setVisibility(isConn ? View.VISIBLE : View.INVISIBLE);
         toolbar.setNavigationIcon(isConn ? R.mipmap.ic_state_connect : R.mipmap.ic_state_disconnect);
         if (!isConn) {
             //toolbar.setNavigationIcon(R.mipmap.ic_state_disconnect);
-            hideProgress();
             showSnackBar(dlMenu, R.string.dis_conn);
             mConnBleInterface.scanBle();
             mConnBleInterface.addObserver(MainMenuActivity.this);
         }else {
             musicInterface.initRead();
-            hideProgress();
             presenter.getBleConnectedStatue();
         }
     }

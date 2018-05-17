@@ -19,7 +19,7 @@ android {
     }
 
     greendao {
-        schemaVersion 2
+        schemaVersion 3
         daoPackage 'com.txtled.gp_a012.bean.dao'
         targetGenDir 'src/main/java'
     }
