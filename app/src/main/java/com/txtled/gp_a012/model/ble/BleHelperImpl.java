@@ -375,6 +375,7 @@ public class BleHelperImpl implements BleHelper {
         mBleClient.disconnect(mAddress);
         mBleClient.unregisterConnectStatusListener(mAddress,listener);
         listener = null;
+        conn = false;
 
 //        try {
 //            socket.close();

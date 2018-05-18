@@ -129,6 +129,8 @@ public class ConnBleService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mConnBleObservable.deleteObservers();
+        mConnBleObservable = null;
         stopTimer();
     }
 }

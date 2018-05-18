@@ -325,6 +325,7 @@ public class MusicService extends Service implements BleHelper.OnReadListener{
             mMediaPlayer.release();
             mMediaPlayer = null;
             dispose();
+            mDataManagerModel = null;
             if (EventBus.getDefault().isRegistered(this)) {
                 EventBus.getDefault().unregister(this);
             }

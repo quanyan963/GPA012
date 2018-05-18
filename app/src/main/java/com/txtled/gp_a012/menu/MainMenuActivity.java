@@ -171,10 +171,11 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                toolbar.setNavigationIcon(R.mipmap.ic_state_disconnect);
+                toolbar.setNavigationIcon(isConn ? R.mipmap.ic_state_connect : R.mipmap.ic_state_disconnect);
             }
         });
-        presenter.checkBlePermission(false, this);
+        if (!isConn)
+            presenter.checkBlePermission(false, this);
     }
 
 //    @Override
@@ -330,7 +331,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
         isConn = true;
         hideSnackBar();
         hideProgress();
-        toolbar.setNavigationIcon(R.mipmap.ic_state_connect);
+        //toolbar.setNavigationIcon(R.mipmap.ic_state_connect);
         //presenter.getBleConnectedStatue();
     }
 
@@ -368,8 +369,9 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
         if (!isConn) {
             //toolbar.setNavigationIcon(R.mipmap.ic_state_disconnect);
             showSnackBar(dlMenu, R.string.dis_conn);
-            mConnBleInterface.scanBle();
             mConnBleInterface.addObserver(MainMenuActivity.this);
+            mConnBleInterface.scanBle();
+
         }else {
             //presenter.getBleConnectedStatue();
 
