@@ -15,6 +15,7 @@ import com.txtled.gp_a012.bean.event.PlayVolumeEvent;
 import com.txtled.gp_a012.model.DataManagerModel;
 import com.txtled.gp_a012.model.ble.BleHelper;
 import com.txtled.gp_a012.utils.Constants;
+import com.txtled.gp_a012.utils.RxUtil;
 import com.txtled.gp_a012.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -23,11 +24,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
@@ -58,6 +61,7 @@ public class MusicService extends Service implements BleHelper.OnReadListener{
     private boolean mIsRandom;
     private boolean mIsCycle;
     private DataManagerModel mDataManagerModel;
+    public static final int DELAY = 1;
 
     @Override
     public void onCreate() {
@@ -78,7 +82,7 @@ public class MusicService extends Service implements BleHelper.OnReadListener{
 
     @Override
     public void onRead(byte[] data) {
-        String mData = data.toString();
+        String mData = Utils.bytesToAscii(data,0,data.length-1);
 
         switch (mData.substring(5,6)){
             case POWER_REQ:
@@ -87,16 +91,17 @@ public class MusicService extends Service implements BleHelper.OnReadListener{
                     mDataManagerModel.updateFlame(TO_MUSIC,1);
                     EventBus.getDefault().post(new FlameEvent(TO_MUSIC,1));
                 }else {//1~2
-                    mDataManagerModel.updateFlame(LIGHT, Integer.parseInt(num)-1);
-                    EventBus.getDefault().post(new FlameEvent(LIGHT,Integer
+                    mDataManagerModel.updateFlame(LIGHT_STATUE, 1);
+                    mDataManagerModel.updateFlame(POWER, Integer.parseInt(num)-1);
+                    EventBus.getDefault().post(new FlameEvent(POWER,Integer
                             .parseInt(num)-1));
                 }
                 break;
             case REQUEST_REQ://返回所有数据
-                String allData = mData.substring(8,mData.length()-1);
+                String allData = mData.substring(8,mData.length());
                 mDataManagerModel.updateFlame(LIGHT_STATUE, Integer.parseInt(allData.substring(0,2),16));
-                mDataManagerModel.updateFlame(LIGHT, Integer.parseInt(allData.substring(2,4),16)-1);
-                mDataManagerModel.updateFlame(POWER, Integer.parseInt(allData.substring(4,6),16)-1);
+                mDataManagerModel.updateFlame(LIGHT, Integer.parseInt(allData.substring(2,4),16));
+                mDataManagerModel.updateFlame(POWER, Integer.parseInt(allData.substring(4,6),16));
                 mDataManagerModel.updateFlame(TO_MUSIC, Integer.parseInt(allData.substring(6,8),16)-1);
                 mDataManagerModel.updateFlame(SPEED,Integer.parseInt(allData.substring(8,10),16));
 //                mDataManagerModel.setMainVolume(Integer.parseInt(allData[5],16));
@@ -224,45 +229,20 @@ public class MusicService extends Service implements BleHelper.OnReadListener{
 
         @Override
         public void initRead() {
-            mDataManagerModel.notifyBle(new BleHelper.OnReadListener() {
-                @Override
-                public void onRead(byte[] data) {
-                    String mData = data.toString();
 
-                    switch (mData.substring(5,6)){
-                        case POWER_REQ:
-                            String num = mData.substring(6,8);
-                            if (num.equals("03")){//脉动音乐
-                                mDataManagerModel.updateFlame(TO_MUSIC,1);
-                                EventBus.getDefault().post(new FlameEvent(TO_MUSIC,1));
-                            }else {//1~2
-                                mDataManagerModel.updateFlame(LIGHT, Integer.parseInt(num)-1);
-                                EventBus.getDefault().post(new FlameEvent(LIGHT,Integer
-                                        .parseInt(num)-1));
-                            }
-                            break;
-                        case REQUEST_REQ://返回所有数据
-                            String allData = mData.substring(8,mData.length()-1);
-                            mDataManagerModel.updateFlame(LIGHT_STATUE, Integer.parseInt(allData.substring(0,2),16));
-                            mDataManagerModel.updateFlame(LIGHT, Integer.parseInt(allData.substring(2,4),16)-1);
-                            mDataManagerModel.updateFlame(POWER, Integer.parseInt(allData.substring(4,6),16)-1);
-                            mDataManagerModel.updateFlame(TO_MUSIC, Integer.parseInt(allData.substring(6,8),16)-1);
-                            mDataManagerModel.updateFlame(SPEED,Integer.parseInt(allData.substring(8,10),16));
-//                            mDataManagerModel.setMainVolume(Integer.parseInt(allData[5],16));
-//                            EventBus.getDefault().post(new PlayVolumeEvent(Integer.parseInt(allData[5],16)));
+            Flowable.timer(DELAY, TimeUnit.MILLISECONDS)
+                    .compose(RxUtil.<Long>rxSchedulerHelper())
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<Long>() {
+                        @Override
+                        public void accept(Long aLong) throws Exception {
+                            //setBleListener();
+                            mDataManagerModel.notifyBle(MusicService.this);
+                            //DT指令暂时不发
+                            //mDataManagerModel.writeCommand(BleUtils.getBleStatue());
+                        }
+                    });
 
-                            break;
-                        case OPEN_CLOSE://开灯
-                            String statue = mData.substring(6,8);
-                            mDataManagerModel.updateFlame(LIGHT_STATUE,Integer.parseInt(statue,16));
-                            EventBus.getDefault().post(new FlameEvent(LIGHT_STATUE,Integer
-                                    .parseInt(statue,16)));
-                            break;
-
-                    }
-                }
-            });
-            //mDataManagerModel.readCommand(MusicService.this);
         }
 
     }

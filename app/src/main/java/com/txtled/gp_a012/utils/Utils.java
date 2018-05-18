@@ -3,7 +3,6 @@ package com.txtled.gp_a012.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.media.AudioManager;
@@ -14,14 +13,11 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
@@ -33,7 +29,7 @@ import com.txtled.gp_a012.widget.CustomTextView;
 import com.txtled.gp_a012.widget.listener.MusicListListener;
 import com.txtled.gp_a012.widget.listener.ViewClickListener;
 
-import java.util.Arrays;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -42,7 +38,7 @@ import java.util.List;
  */
 
 public class Utils {
-    public static final boolean isLog = true;
+    public static final boolean isLog = false;
     public static String getColorStr(int color) {
         int r = Color.red(color);
         int g = Color.green(color);
@@ -204,6 +200,45 @@ public class Utils {
 //            return repeatText;
 //        }
 //    }
+
+    public static String bytesToAscii(byte[] bytes, int offset, int dateLen) {
+        if ((bytes == null) || (bytes.length == 0) || (offset < 0) || (dateLen <= 0)) {
+            return null;
+        }
+        if ((offset >= bytes.length) || (bytes.length - offset < dateLen)) {
+            return null;
+        }
+
+        String asciiStr = null;
+        byte[] data = new byte[dateLen];
+        System.arraycopy(bytes, offset, data, 0, dateLen);
+        try {
+            asciiStr = new String(data, "ISO8859-1");
+        } catch (UnsupportedEncodingException e) {
+        }
+        return asciiStr;
+    }
+
+    static final char[] hexArray = "0123456789ABCDEF".toCharArray();
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+    public static String asciiToString(String value)
+    {
+        StringBuffer sbu = new StringBuffer();
+        String[] chars = value.split(",");
+        for (int i = 0; i < chars.length; i++) {
+            sbu.append((char) Integer.parseInt(chars[i]));
+        }
+        return sbu.toString();
+    }
 
     public static String formatData(int data) {
         return data < 10 ? "0" + data : data + "";

@@ -2,14 +2,11 @@ package com.txtled.gp_a012.menu.mvp;
 
 import android.app.Activity;
 
-
 import com.txtled.gp_a012.R;
 import com.txtled.gp_a012.base.CommonSubscriber;
 import com.txtled.gp_a012.base.RxPresenter;
 import com.txtled.gp_a012.bean.Flame;
 import com.txtled.gp_a012.bean.Song;
-import com.txtled.gp_a012.bean.event.FlameEvent;
-import com.txtled.gp_a012.bean.event.PlayVolumeEvent;
 import com.txtled.gp_a012.model.DataManagerModel;
 import com.txtled.gp_a012.model.ble.BleHelper;
 import com.txtled.gp_a012.model.operate.OperateHelper;
@@ -19,7 +16,6 @@ import com.txtled.gp_a012.utils.RxUtil;
 import com.txtled.gp_a012.utils.Utils;
 import com.txtled.gp_a012.widget.listener.BleConnListener;
 
-import org.greenrobot.eventbus.EventBus;
 import org.reactivestreams.Publisher;
 
 import java.util.ArrayList;
@@ -35,14 +31,6 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
 import static com.txtled.gp_a012.base.BaseActivity.TAG;
-import static com.txtled.gp_a012.utils.BleUtils.OPEN_CLOSE;
-import static com.txtled.gp_a012.utils.BleUtils.POWER_REQ;
-import static com.txtled.gp_a012.utils.BleUtils.REQUEST_REQ;
-import static com.txtled.gp_a012.utils.Constants.LIGHT;
-import static com.txtled.gp_a012.utils.Constants.LIGHT_STATUE;
-import static com.txtled.gp_a012.utils.Constants.POWER;
-import static com.txtled.gp_a012.utils.Constants.SPEED;
-import static com.txtled.gp_a012.utils.Constants.TO_MUSIC;
 
 /**
  * Created by KomoriWu

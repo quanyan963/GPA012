@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
 import com.txtled.gp_a012.R;
@@ -327,10 +326,12 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
 
     @Override
     public void connected() {
+        musicInterface.initRead();
         isConn = true;
         hideSnackBar();
         hideProgress();
         toolbar.setNavigationIcon(R.mipmap.ic_state_connect);
+        //presenter.getBleConnectedStatue();
     }
 
     @Override
@@ -370,8 +371,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
             mConnBleInterface.scanBle();
             mConnBleInterface.addObserver(MainMenuActivity.this);
         }else {
-            musicInterface.initRead();
-            presenter.getBleConnectedStatue();
+            //presenter.getBleConnectedStatue();
 
         }
     }

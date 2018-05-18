@@ -24,9 +24,6 @@ import com.txtled.gp_a012.utils.BleUtils;
 import com.txtled.gp_a012.utils.Utils;
 import com.txtled.gp_a012.widget.listener.BleConnListener;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -101,9 +98,16 @@ public class BleHelperImpl implements BleHelper {
 //                                        BluetoothDevice romoteDevice = adapter.getRemoteDevice(device.getAddress());
 //                                        socket = romoteDevice
 //                                                .createRfcommSocketToServiceRecord(UUID.fromString(SPP_UUID));
-//                                        connSppBle(socket,onScanBleListener);
+//                                        try {
+//                                            socket.connect();
+//                                            onScanBleListener.onSuccess();
+//                                            //Toast.makeText(this, "connect success", Toast.LENGTH_SHORT).show();
+//                                        } catch (IOException e2) {
+//                                            e2.printStackTrace();
+//                                            onScanBleListener.onScanFailure();
+//                                            //Toast.makeText(this, "connect failed", Toast.LENGTH_SHORT).show();
+//                                        }
                                         //ble蓝牙连接
-                                        //searchBleByAddress(device.getAddress(), onScanBleListener);
                                         searchBleByAddress(device.getAddress(), onScanBleListener,onConnBleListener);
                                     }
                                 }
@@ -136,18 +140,6 @@ public class BleHelperImpl implements BleHelper {
         }
     }
 
-    private void connSppBle(BluetoothSocket bluetoothSocket, OnScanBleListener onScanBleListener) {
-        try {
-            bluetoothSocket.connect();
-            onScanBleListener.onSuccess();
-            //Toast.makeText(this, "connect success", Toast.LENGTH_SHORT).show();
-        } catch (IOException e2) {
-            e2.printStackTrace();
-            onScanBleListener.onScanFailure();
-            //Toast.makeText(this, "connect failed", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void searchBleByAddress(final String address, final OnScanBleListener onScanBleListener, final OnConnBleListener onConnBleListener) {
         if (!conn){
             mBleClient.search(mRequest, new SearchResponse() {
@@ -160,11 +152,14 @@ public class BleHelperImpl implements BleHelper {
                 public void onDeviceFounded(final SearchResult device) {
                     Utils.Logger(TAG,"scan ble name",device.getName());
                     Utils.Logger(TAG,"scan ble mac",device.getAddress());
-                    if (device.getName().contains("mi")){
-                        if (address.substring(8).equals(device.getAddress().
-                                substring(8))){
+                    String broadcastPack =Utils.bytesToHex(device.scanRecord);
+                    String[] values = broadcastPack.split("03FF");
+                    if (values.length == 2){
+                        broadcastPack = values[1].toString().substring(0,4);
+                        if (address.substring(12).replace(":","").equals(broadcastPack)){//device.getAddress().substring(8))
                             mBleClient.stopSearch();
 
+                            //broadcastPack = Utils.asciiToString(broadcastPack.substring(0,62));
                             if (!conn){
                                 mAddress = device.getAddress();
                                 onScanBleListener.onSuccess();
@@ -174,6 +169,9 @@ public class BleHelperImpl implements BleHelper {
                             }
                         }
                     }
+//                    if (device.getName().contains("mi")){
+//
+//                    }
 
 //                if (!TextUtils.isEmpty(address)) {
 //                    if (device.getAddress().equalsIgnoreCase(getMacAddress(address))) {
@@ -227,7 +225,6 @@ public class BleHelperImpl implements BleHelper {
                                 mSendCharacterUUID = character.getUuid();
                                 mNotifyCharacterUUID = character.getUuid();
                                 onConnBleListener.onSuccess();
-                                Utils.Logger("conn:---","","sucess");
                             }
                         }
                     }
