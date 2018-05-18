@@ -15,13 +15,19 @@ import com.txtled.gp_a012.bean.Flame;
 import com.txtled.gp_a012.bean.event.FlameEvent;
 import com.txtled.gp_a012.flame.mvp.FlameContract;
 import com.txtled.gp_a012.flame.mvp.FlamePresenter;
+import com.txtled.gp_a012.main.MainActivity;
+import com.txtled.gp_a012.utils.RxUtil;
 import com.txtled.gp_a012.widget.ItemLayout;
 
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Flowable;
+import io.reactivex.functions.Consumer;
 
 import static com.txtled.gp_a012.utils.Constants.LIGHT;
 import static com.txtled.gp_a012.utils.Constants.LIGHT_STATUE;
@@ -94,6 +100,7 @@ public class FlameFragment extends MvpBaseFragment<FlamePresenter> implements Fl
     public void onFragmentFlameEvent(FlameEvent flameEvent) {
         switch (flameEvent.getType()) {
             case LIGHT_STATUE:
+                ((MainActivity)getActivity()).changeSwitch(flameEvent.getLightStatue());
                 if (flameEvent.getLightStatue() == 1) {
                     presenter.sendStatue(mFlame);
                 } else {
@@ -104,7 +111,8 @@ public class FlameFragment extends MvpBaseFragment<FlamePresenter> implements Fl
                 }
                 break;
             case POWER:
-                ilPower.setSeekBarProgress(flameEvent.getPower());
+                ((MainActivity)getActivity()).changeSwitch(flameEvent.getLightStatue());
+                ilPower.setSeekBarProgress(flameEvent.getPower() == 1 ? 255 : 0);
 //                if (!flameEvent.isNeedFlush()){
 //
 //                }

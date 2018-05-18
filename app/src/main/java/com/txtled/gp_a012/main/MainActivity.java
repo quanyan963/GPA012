@@ -37,6 +37,7 @@ import com.txtled.gp_a012.music.service.MusicInterface;
 import com.txtled.gp_a012.music.service.MusicService;
 import com.txtled.gp_a012.utils.AlertUtils;
 import com.txtled.gp_a012.utils.Constants;
+import com.txtled.gp_a012.utils.RxUtil;
 import com.txtled.gp_a012.utils.Utils;
 import com.txtled.gp_a012.widget.CustomButton;
 import com.txtled.gp_a012.widget.CustomRButton;
@@ -52,6 +53,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 
 import static android.view.View.VISIBLE;
 import static com.txtled.gp_a012.utils.Constants.LIGHT_STATUE;
@@ -382,15 +386,26 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
         }
     }
 
-    @Override
-    public void onEventFlameThread(FlameEvent flameEvent) {
-        super.onEventFlameThread(flameEvent);
-        if (flameEvent.getType().equals(LIGHT_STATUE)){
-            //开关灯
-            isReq = true;
-            Check.setChecked(flameEvent.getLightStatue() == 0 ? false : true);
-            isReq = false;
-        }
+//    @Override
+//    public void onEventFlameThread(FlameEvent flameEvent) {
+//        super.onEventFlameThread(flameEvent);
+//        if (flameEvent.getType().equals(LIGHT_STATUE)){
+//            //开关灯
+//            isReq = true;
+//            Check.setChecked(flameEvent.getLightStatue() == 0 ? false : true);
+//            isReq = false;
+//        }
+//    }
+
+    public void changeSwitch(final int id){
+        isReq = true;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Check.setChecked(id == 0 ? false : true);
+            }
+        });
+        isReq = false;
     }
 
     private void initPlayUi(Song song) {

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GP-A012</string>
+    <string name="ok">确认</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确认</string>
+    <string name="no_support_ble">该手机不支持BLE蓝牙!</string>
+    <string name="input_limit">超出限制！</string>
+    <string name="collect">收集</string>
+    <string name="turn_on_device">请打开您的设备&#8230;</string>
+    <string name="conn_failure">连接超时，请重试。</string>
+    <string name="dis_open_device_hint">请前往设置界面并连接音频蓝牙。</string>
+    <string name="no_hint">不在询问</string>
+    <string name="gps_not_open_hint">GPS是 关闭的，可能无法正常运行!</string>
+    <string name="exit_program_hint">再按一次退出程序</string>
+    <string name="music">音乐</string>
+    <string name="flame">火焰</string>
+    <string name="setting">设置</string>
+    <string name="percent">%</string>
+    <string name="song">歌曲</string>
+    <string name="singer">作者</string>
+    <string name="instruction">指令</string>
+    <string name="about_us">关于我们</string>
+    <string name="home">首页</string>
+    <string name="song_size">歌曲列表（%s 首）</string>
+    <string name="there_was_no_playable_song">没有可播放的歌曲</string>
+    <string name="dis_conn">无法找到音箱，请确认音箱已开机或检查连接。</string>
+    <string name="pulse_to_music">脉动至音乐</string>
+</resources>

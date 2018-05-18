@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GP-A012</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="no_support_ble">Phone does not support BLE !</string>
+    <string name="input_limit">Over the limit！</string>
+    <string name="collect">Collect</string>
+    <string name="turn_on_device">Please turn on your device&#8230;</string>
+    <string name="conn_failure">Connect timeout,please try again.</string>
+    <string name="dis_open_device_hint">Please go to the setup interface and connect the specified equipment first.</string>
+    <string name="no_hint">No longer ask</string>
+    <string name="gps_not_open_hint">The GPS is not open and may not operate properly !</string>
+    <string name="exit_program_hint">Again according to exit the program</string>
+    <string name="music">Music</string>
+    <string name="flame">Flame</string>
+    <string name="setting">Setting</string>
+    <string name="percent">%</string>
+    <string name="song">song</string>
+    <string name="singer">singer</string>
+    <string name="instruction">Instruction</string>
+    <string name="about_us">About us</string>
+    <string name="home">Home</string>
+    <string name="song_size">Play Lists（%s songs）</string>
+    <string name="there_was_no_playable_song">There was no playable song</string>
+    <string name="dis_conn">Your speaker cannot be found.Please power it on or check your connection</string>
+    <string name="pulse_to_music">Pulse to Music</string>
+</resources>

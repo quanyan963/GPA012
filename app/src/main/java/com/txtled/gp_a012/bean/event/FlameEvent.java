@@ -30,6 +30,7 @@ public class FlameEvent {
                 this.light = value;
                 break;
             case "3":
+                this.lightStatue = 1;
                 this.power = value;
                 break;
             case "4":
