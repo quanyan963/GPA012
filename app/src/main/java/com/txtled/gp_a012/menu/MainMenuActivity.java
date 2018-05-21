@@ -1,9 +1,12 @@
 package com.txtled.gp_a012.menu;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.os.IBinder;
@@ -178,11 +181,39 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
             presenter.checkBlePermission(false, this);
     }
 
-//    @Override
-//    public void onCheckedChanged(RadioGroup group, int checkedId) {
-//        if (mIsReturn) return;
-//        presenter.checkChange(checkedId);
-//    }
+    private IntentFilter makeFilter() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        return filter;
+    }
+
+//    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            //LogUtil.e(TAG, "onReceive---------");
+//            switch (intent.getAction()) {
+//                case BluetoothAdapter.ACTION_STATE_CHANGED:
+//                    int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
+//                    switch (blueState) {
+////                        case BluetoothAdapter.STATE_TURNING_ON:
+////                            Utils.Logger("onReceive","onReceive","STATE_TURNING_ON");
+////                            break;
+////                        case BluetoothAdapter.STATE_ON:
+////                            Utils.Logger("onReceive","onReceive","STATE_ON");
+////                            break;
+//                        case BluetoothAdapter.STATE_TURNING_OFF:
+//
+//                            Utils.Logger("onReceive","onReceive","STATE_TURNING_OFF");
+//                            break;
+////                        case BluetoothAdapter.STATE_OFF:
+////                            Utils.Logger("onReceive","onReceive","STATE_OFF");
+////                            break;
+//                    }
+//                    break;
+//            }
+//        }
+//    };
 
     private class MyServiceConn implements ServiceConnection {
         @Override
@@ -331,6 +362,8 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
         isConn = true;
         hideSnackBar();
         hideProgress();
+        //this.registerReceiver(mReceiver,makeFilter());
+
         //toolbar.setNavigationIcon(R.mipmap.ic_state_connect);
         //presenter.getBleConnectedStatue();
     }
@@ -446,6 +479,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
             unbindService(mBleServiceConn);
             stopService(mBleIntent);
         }
+        //this.unregisterReceiver(mReceiver);
     }
 
     @Override

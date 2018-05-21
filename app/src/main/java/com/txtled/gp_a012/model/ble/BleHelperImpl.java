@@ -156,7 +156,7 @@ public class BleHelperImpl implements BleHelper {
                     String[] values = broadcastPack.split("03FF");
                     if (values.length == 2){
                         broadcastPack = values[1].toString().substring(0,4);
-                        if (address.substring(12).replace(":","").equals(broadcastPack)){//device.getAddress().substring(8))
+                        if (address.replace(":","").contains(broadcastPack)){//device.getAddress().substring(8))
                             mBleClient.stopSearch();
 
                             //broadcastPack = Utils.asciiToString(broadcastPack.substring(0,62));
