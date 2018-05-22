@@ -17,7 +17,7 @@ public class BleUtils {
     public static final String SERVICE = "ffe0";
     public static final String SEMICOLON = ";";
     public static final String HEAD = "A005+";//AT
-    public static final String END = "\r\n";
+    public static final String END = "";//\r\n
     public static final String OPEN_CLOSE = "A"; //开关彩灯
     public static final String LIGHT = "B";//亮度调节
     public static final String POWER = "P";//火苗大小

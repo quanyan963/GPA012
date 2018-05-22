@@ -1,6 +1,7 @@
 package com.txtled.gp_a012.model.ble;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.txtled.gp_a012.widget.listener.BleConnListener;
 
@@ -13,7 +14,7 @@ public interface BleHelper {
 
     void connBle(OnConnBleListener onConnBleListener);
 
-    void writeCommand(String command);
+    void writeCommand(String command, Context context);
 
     void notifyBle(OnReadListener readListener);
 

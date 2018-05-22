@@ -190,7 +190,7 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (isReq)
             return;
-        presenter.checkChanged(isChecked);
+        presenter.checkChanged(isChecked,this);
     }
 
     private class MyServiceConn implements ServiceConnection {
@@ -283,7 +283,7 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
             EventBus.getDefault().post(new PlayVolumeEvent(mVolume));
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
                     Math.round(mVolume * everyValue),0);
-            presenter.volumeChange(mVolume);
+            presenter.volumeChange(mVolume,this);
         }else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
             mVolume = Utils.getSoundValue(mAudioManager.
                     getStreamVolume(AudioManager.STREAM_MUSIC)-1,everyValue);
@@ -291,7 +291,7 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
             EventBus.getDefault().post(new PlayVolumeEvent(mVolume));
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
                     Math.round(mVolume * everyValue),0);
-            presenter.volumeChange(mVolume);
+            presenter.volumeChange(mVolume,this);
         }
         if (mCurrentFragment instanceof MusicFragment){
             if (keyCode == KeyEvent.KEYCODE_BACK){

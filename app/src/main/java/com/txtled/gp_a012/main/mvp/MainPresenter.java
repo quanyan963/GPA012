@@ -1,6 +1,8 @@
 package com.txtled.gp_a012.main.mvp;
 
 
+import android.content.Context;
+
 import com.txtled.gp_a012.R;
 import com.txtled.gp_a012.base.RxPresenter;
 import com.txtled.gp_a012.bean.Flame;
@@ -85,16 +87,16 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
     }
 
     @Override
-    public void checkChanged(boolean change) {
-        mDataManagerModel.writeCommand(BleUtils.getLightSwitch(change));
+    public void checkChanged(boolean change, Context context) {
+        mDataManagerModel.writeCommand(BleUtils.getLightSwitch(change),context);
         mDataManagerModel.updateFlame(LIGHT_STATUE, change ? 1 : 0);
         Utils.Logger(TAG,"getLightSwitch",BleUtils.getLightSwitch(change));
         EventBus.getDefault().post(new FlameEvent(LIGHT_STATUE,change ? 1 : 0));
     }
 
     @Override
-    public void volumeChange(int volume) {
-        mDataManagerModel.writeCommand(BleUtils.getSound(volume));
+    public void volumeChange(int volume, Context context) {
+        mDataManagerModel.writeCommand(BleUtils.getSound(volume),context);
         Utils.Logger(TAG,"volumeChange",BleUtils.getSound(volume));
         mDataManagerModel.setMainVolume(volume);
     }

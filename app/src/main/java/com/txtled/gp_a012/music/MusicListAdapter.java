@@ -39,14 +39,22 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Musi
         mSelectedList = new ArrayList<>();
     }
 
-    public void addList(boolean playing, List<Song> mList, RecyclerView recyclerView) {
+    public void addList(final boolean playing, final List<Song> mList, final RecyclerView recyclerView) {
         this.mList = mList;
-        for (int i = 0; i < mList.size(); i++) {
-            int position = MyApplication.getAppComponent().getPreferencesHelper().getPlayPosition();
-            mSelectedList.add(i, playing && i == position);
-            recyclerView.scrollToPosition(position);
-        }
-        notifyDataSetChanged();
+        Flowable.just(mList)
+                .compose(RxUtil.<List<Song>>rxSchedulerHelper())
+                .subscribe(new Consumer<List<Song>>() {
+                    @Override
+                    public void accept(List<Song> songs) throws Exception {
+                        for (int i = 0; i < songs.size(); i++) {
+                            int position = MyApplication.getAppComponent().getPreferencesHelper().getPlayPosition();
+                            mSelectedList.add(i, playing && i == position);
+                            recyclerView.scrollToPosition(position);
+                        }
+                        notifyDataSetChanged();
+                    }
+                });
+
     }
 
     @Override

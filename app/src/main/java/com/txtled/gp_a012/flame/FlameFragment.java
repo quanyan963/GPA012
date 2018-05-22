@@ -87,12 +87,12 @@ public class FlameFragment extends MvpBaseFragment<FlamePresenter> implements Fl
             } else {
                 seekBar.setProgress(0);
             }
-            presenter.changePower(seekBar.getProgress() > 127 ? 1 : 0, mFlame.getLightStatue());
+            presenter.changePower(seekBar.getProgress() > 127 ? 1 : 0, mFlame.getLightStatue(),getContext());
             //presenter.changePower(seekBar.getProgress(),mFlame.getLightStatue());
         } else if (ilLight.getSeekBar() == seekBar) {
-            presenter.changeLight(seekBar.getProgress(), mFlame.getLightStatue());
+            presenter.changeLight(seekBar.getProgress(), mFlame.getLightStatue(),getContext());
         } else if (ilSpeed.getSeekBar() == seekBar) {
-            presenter.changeSpeed(seekBar.getProgress(), mFlame.getLightStatue());
+            presenter.changeSpeed(seekBar.getProgress(), mFlame.getLightStatue(),getContext());
         }
     }
 
@@ -102,7 +102,7 @@ public class FlameFragment extends MvpBaseFragment<FlamePresenter> implements Fl
             case LIGHT_STATUE:
                 ((MainActivity)getActivity()).changeSwitch(flameEvent.getLightStatue());
                 if (flameEvent.getLightStatue() == 1) {
-                    presenter.sendStatue(mFlame);
+                    presenter.sendStatue(mFlame,getContext());
                 } else {
                     isTouch = false;
                     switchView.setChecked(false);
@@ -134,7 +134,7 @@ public class FlameFragment extends MvpBaseFragment<FlamePresenter> implements Fl
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (!isTouch) return;
-        presenter.setPulseToMusic(isChecked, mFlame.getLightStatue());
+        presenter.setPulseToMusic(isChecked, mFlame.getLightStatue(),getContext());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.txtled.gp_a012.model;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.txtled.gp_a012.bean.Flame;
 import com.txtled.gp_a012.bean.Song;
@@ -45,8 +46,8 @@ public class DataManagerModel implements DBHelper,BleHelper,OperateHelper,Prefer
     }
 
     @Override
-    public void writeCommand(String command) {
-        mBleHelper.writeCommand(command);
+    public void writeCommand(String command, Context context) {
+        mBleHelper.writeCommand(command,context);
     }
 
     @Override

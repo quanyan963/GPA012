@@ -2,6 +2,8 @@ package com.txtled.gp_a012.music.mvp;
 
 
 
+import android.content.Context;
+
 import com.txtled.gp_a012.base.BasePresenter;
 import com.txtled.gp_a012.base.BaseView;
 import com.txtled.gp_a012.bean.Flame;
@@ -33,7 +35,7 @@ public interface MusicContract {
         void onCheckedChanged(int id, boolean b, MusicInterface musicInterface);
         int getVolume();
         void setVolume(int index);
-        void operateVolume(int volume);
+        void operateVolume(int volume, Context context);
 
     }
 

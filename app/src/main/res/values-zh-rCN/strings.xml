@@ -26,4 +26,5 @@
     <string name="there_was_no_playable_song">没有可播放的歌曲</string>
     <string name="dis_conn">无法找到音箱，请确认音箱已开机或检查连接。</string>
     <string name="pulse_to_music">脉动至音乐</string>
+    <string name="scan">正在扫描音乐&#8230;</string>
 </resources>

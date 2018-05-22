@@ -1,6 +1,7 @@
 package com.txtled.gp_a012.menu.mvp;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.txtled.gp_a012.base.BasePresenter;
 import com.txtled.gp_a012.base.BaseView;
@@ -44,9 +45,13 @@ public interface MenuContract {
         List<Song> getSongList();
         void unConn();
         int getPlayPosition();
-        void getBleConnectedStatue();
-        void volumeChange(int volume);
+        void getBleConnectedStatue(Context context);
+        void volumeChange(int volume, Context context);
         int getVolume();
         void checkChange(int checkId);
+        void toMusic();
+        void changePower(int num);
+        void allData(String allData);
+        void changeSwitch(int statue);
     }
 }

@@ -1,5 +1,7 @@
 package com.txtled.gp_a012.flame.mvp;
 
+import android.content.Context;
+
 import com.txtled.gp_a012.base.RxPresenter;
 import com.txtled.gp_a012.bean.Flame;
 import com.txtled.gp_a012.model.DataManagerModel;
@@ -37,29 +39,29 @@ public class FlamePresenter extends RxPresenter<FlameContract.View> implements
     }
 
     @Override
-    public void changePower(int progress, int type) {
+    public void changePower(int progress, int type, Context context) {
         mDataManagerModel.updateFlame(POWER, progress);
         view.changeView(progress);
         if (type == 1) {
-            mDataManagerModel.writeCommand(BleUtils.getPower(progress));
+            mDataManagerModel.writeCommand(BleUtils.getPower(progress),context);
             Utils.Logger(TAG, "getPower", BleUtils.getPower(progress));
         }
     }
 
     @Override
-    public void changeSpeed(int progress, int type) {
+    public void changeSpeed(int progress, int type, Context context) {
         mDataManagerModel.updateFlame(SPEED, progress);
         if (type == 1) {
-            mDataManagerModel.writeCommand(BleUtils.getSpeed(progress));
+            mDataManagerModel.writeCommand(BleUtils.getSpeed(progress),context);
             Utils.Logger(TAG, "getSpeed", BleUtils.getSpeed(progress));
         }
     }
 
     @Override
-    public void changeLight(int progress, int type) {
+    public void changeLight(int progress, int type, Context context) {
         mDataManagerModel.updateFlame(LIGHT, progress);
         if (type == 1) {
-            mDataManagerModel.writeCommand(BleUtils.getLight(progress));
+            mDataManagerModel.writeCommand(BleUtils.getLight(progress),context);
             Utils.Logger(TAG, "getLight", BleUtils.getLight(progress));
         }
     }
@@ -70,13 +72,13 @@ public class FlamePresenter extends RxPresenter<FlameContract.View> implements
     }
 
     @Override
-    public void sendStatue(final Flame mFlame) {
+    public void sendStatue(final Flame mFlame, final Context context) {
         addSubscribe(Flowable.timer(30, TimeUnit.MILLISECONDS)
                 .compose(RxUtil.<Long>rxSchedulerHelper())
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {
-                        changeLight(mFlame.getLight(), mFlame.getLightStatue());
+                        changeLight(mFlame.getLight(), mFlame.getLightStatue(),context);
                     }
                 }));
         addSubscribe(Flowable.timer(60, TimeUnit.MILLISECONDS)
@@ -84,7 +86,7 @@ public class FlamePresenter extends RxPresenter<FlameContract.View> implements
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {
-                        changePower(mFlame.getPower(), mFlame.getLightStatue());
+                        changePower(mFlame.getPower(), mFlame.getLightStatue(),context);
                     }
                 }));
         addSubscribe(Flowable.timer(90, TimeUnit.MILLISECONDS)
@@ -92,7 +94,7 @@ public class FlamePresenter extends RxPresenter<FlameContract.View> implements
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {
-                        changeSpeed(mFlame.getSpeed(), mFlame.getLightStatue());
+                        changeSpeed(mFlame.getSpeed(), mFlame.getLightStatue(),context);
                     }
                 }));
         addSubscribe(Flowable.timer(120, TimeUnit.MILLISECONDS)
@@ -101,16 +103,16 @@ public class FlamePresenter extends RxPresenter<FlameContract.View> implements
                     @Override
                     public void accept(Long aLong) throws Exception {
                         setPulseToMusic(mFlame.getToMusic() == 1 ? true : false,
-                                mFlame.getLightStatue());
+                                mFlame.getLightStatue(),context);
                     }
                 }));
     }
 
     @Override
-    public void setPulseToMusic(boolean isChecked, int type) {
+    public void setPulseToMusic(boolean isChecked, int type, Context context) {
         mDataManagerModel.updateFlame(TO_MUSIC, isChecked ? 1 : 0);
         if (type == 1){
-            mDataManagerModel.writeCommand(BleUtils.getToMusic(isChecked));
+            mDataManagerModel.writeCommand(BleUtils.getToMusic(isChecked),context);
         }
     }
 

@@ -26,4 +26,5 @@
     <string name="there_was_no_playable_song">There was no playable song</string>
     <string name="dis_conn">Your speaker cannot be found.Please power it on or check your connection</string>
     <string name="pulse_to_music">Pulse to Music</string>
+    <string name="scan">Scan Music&#8230;</string>
 </resources>

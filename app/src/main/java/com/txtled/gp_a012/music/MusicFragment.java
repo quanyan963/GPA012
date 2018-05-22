@@ -205,7 +205,7 @@ public class MusicFragment extends MvpBaseFragment<MusicPresenter> implements Mu
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         mVolume = seekBar.getProgress();
-        presenter.operateVolume(seekBar.getProgress());
+        presenter.operateVolume(seekBar.getProgress(),getContext());
         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) (mVolume * everyValue), 0);
         presenter.setVolume(mVolume);
     }

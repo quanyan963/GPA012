@@ -41,6 +41,7 @@
 
         <service android:name=".music.service.MusicService" />
         <service android:name=".menu.service.ConnBleService"/>
+        <!--<service android:name=".menu.service.BluetoothClientService"/>-->
     </application>
 
 </manifest>

@@ -31,6 +31,10 @@ import com.txtled.gp_a012.widget.listener.ViewClickListener;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Flowable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by KomoriWu
@@ -116,7 +120,7 @@ public class Utils {
 //        mPopWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 //    }
 
-    public static void showBottomDialog(Activity activity, boolean playing, List<Song> songList,
+    public static void showBottomDialog(Activity activity, final boolean playing, final List<Song> songList,
                                         final MusicListListener listener) {
         final BottomSheetDialog dialog = new BottomSheetDialog(activity);
         View dialogView = LayoutInflater.from(activity).inflate(R.layout.pop_music, null);
@@ -124,13 +128,12 @@ public class Utils {
         CustomTextView tvTitle = (CustomTextView) dialogView.findViewById(R.id.mtv_title);
         tvTitle.setText(String.format(MyApplication.getInstance().getResources().getString(R.string.
                 song_size), songList.size() + ""));
-        RecyclerView rlvMusicList = (RecyclerView) dialogView.findViewById(R.id.rlv_music_list);
+        final RecyclerView rlvMusicList = (RecyclerView) dialogView.findViewById(R.id.rlv_music_list);
         rlvMusicList.setHasFixedSize(true);
         rlvMusicList.setLayoutManager(new LinearLayoutManager(activity));
-        MusicListAdapter musicListAdapter = new MusicListAdapter(activity);
+        final MusicListAdapter musicListAdapter = new MusicListAdapter(activity);
         rlvMusicList.setAdapter(musicListAdapter);
         musicListAdapter.addList(playing, songList, rlvMusicList);
-
         musicListAdapter.setOnClickListener(new MusicListAdapter.MusicClickListener() {
             @Override
             public void onItemClick(int position) {

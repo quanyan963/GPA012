@@ -1,12 +1,14 @@
 package com.txtled.gp_a012.menu.mvp;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.txtled.gp_a012.R;
 import com.txtled.gp_a012.base.CommonSubscriber;
 import com.txtled.gp_a012.base.RxPresenter;
 import com.txtled.gp_a012.bean.Flame;
 import com.txtled.gp_a012.bean.Song;
+import com.txtled.gp_a012.bean.event.FlameEvent;
 import com.txtled.gp_a012.model.DataManagerModel;
 import com.txtled.gp_a012.model.ble.BleHelper;
 import com.txtled.gp_a012.model.operate.OperateHelper;
@@ -16,7 +18,9 @@ import com.txtled.gp_a012.utils.RxUtil;
 import com.txtled.gp_a012.utils.Utils;
 import com.txtled.gp_a012.widget.listener.BleConnListener;
 
+import org.greenrobot.eventbus.EventBus;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +35,11 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
 import static com.txtled.gp_a012.base.BaseActivity.TAG;
+import static com.txtled.gp_a012.utils.Constants.LIGHT;
+import static com.txtled.gp_a012.utils.Constants.LIGHT_STATUE;
+import static com.txtled.gp_a012.utils.Constants.POWER;
+import static com.txtled.gp_a012.utils.Constants.SPEED;
+import static com.txtled.gp_a012.utils.Constants.TO_MUSIC;
 
 /**
  * Created by KomoriWu
@@ -38,7 +47,7 @@ import static com.txtled.gp_a012.base.BaseActivity.TAG;
  */
 
 public class MenuPresenter extends RxPresenter<MenuContract.View> implements MenuContract.Presenter {
-    public static final int DELAY = 1;
+    public static final int DELAY = 100;
     private DataManagerModel mDataManagerModel;
 
     @Inject
@@ -126,40 +135,31 @@ public class MenuPresenter extends RxPresenter<MenuContract.View> implements Men
 
             @Override
             public void onSuccess() {
-                addSubscribe(Flowable.timer(DELAY, TimeUnit.MILLISECONDS)
-                        .compose(RxUtil.<Long>rxSchedulerHelper())
-                        .subscribeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<Long>() {
-                            @Override
-                            public void accept(Long aLong) throws Exception {
-                                //setBleListener();
-                                mDataManagerModel.connBle(new BleHelper.OnConnBleListener() {
-                                    @Override
-                                    public void onSuccess() {
-                                        view.connected();
-                                    }
-
-                                    @Override
-                                    public void onFailure() {
-                                        view.connFailure();
-                                    }
-                                });
-                            }
-                        }));
-
-
-                mDataManagerModel.isBleConnected(new BleConnListener() {
-                    @Override
-                    public void onConn() {
-                        view.setBleStatue(true);
-                    }
-
-                    @Override
-                    public void onDisConn() {
-                        view.setBleStatue(false);
-                        unConn();
-                    }
-                });
+                view.connected();
+//                mDataManagerModel.connBle(new BleHelper.OnConnBleListener() {
+//                    @Override
+//                    public void onSuccess() {
+//                        view.connected();
+//                    }
+//
+//                    @Override
+//                    public void onFailure() {
+//                        view.connFailure();
+//                    }
+//                });
+//
+//                mDataManagerModel.isBleConnected(new BleConnListener() {
+//                    @Override
+//                    public void onConn() {
+//                        view.setBleStatue(true);
+//                    }
+//
+//                    @Override
+//                    public void onDisConn() {
+//                        view.setBleStatue(false);
+//                        unConn();
+//                    }
+//                });
 
 
 //                mDataManagerModel.isBleConnected(new BleConnListener() {
@@ -261,7 +261,7 @@ public class MenuPresenter extends RxPresenter<MenuContract.View> implements Men
                             Exception {
                         return Flowable.fromIterable(songBeen);
                     }
-                }).delay(DELAY, TimeUnit.SECONDS)
+                }).delay(DELAY, TimeUnit.MILLISECONDS)
                 .compose(RxUtil.<Song>rxSchedulerHelper())
                 .subscribeWith(new CommonSubscriber<Song>(view) {
                     @Override
@@ -328,14 +328,14 @@ public class MenuPresenter extends RxPresenter<MenuContract.View> implements Men
     }
 
     @Override
-    public void getBleConnectedStatue() {
-        mDataManagerModel.writeCommand(BleUtils.getBleStatue());
+    public void getBleConnectedStatue(Context context) {
+        mDataManagerModel.writeCommand(BleUtils.getBleStatue(),context);
         Utils.Logger(TAG,"getBleStatue",BleUtils.getBleStatue());
     }
 
     @Override
-    public void volumeChange(int volume) {
-        mDataManagerModel.writeCommand(BleUtils.getSound(volume));
+    public void volumeChange(int volume, Context context) {
+        mDataManagerModel.writeCommand(BleUtils.getSound(volume),context);
         Utils.Logger(TAG,"volumeChange",BleUtils.getSound(volume));
         mDataManagerModel.setMainVolume(volume);
     }
@@ -348,5 +348,35 @@ public class MenuPresenter extends RxPresenter<MenuContract.View> implements Men
     @Override
     public void checkChange(int checkId) {
         view.toMainView(checkId);
+    }
+
+    @Override
+    public void toMusic() {
+        mDataManagerModel.updateFlame(TO_MUSIC,1);
+        EventBus.getDefault().post(new FlameEvent(TO_MUSIC,1));
+    }
+
+    @Override
+    public void changePower(int num) {
+        mDataManagerModel.updateFlame(LIGHT_STATUE, 1);
+        mDataManagerModel.updateFlame(POWER, num);
+        EventBus.getDefault().post(new FlameEvent(POWER,num));
+    }
+
+    @Override
+    public void allData(String allData) {
+        mDataManagerModel.updateFlame(LIGHT_STATUE, Integer.parseInt(allData.substring(0,2),16));
+        mDataManagerModel.updateFlame(LIGHT, Integer.parseInt(allData.substring(2,4),16));
+        mDataManagerModel.updateFlame(POWER, Integer.parseInt(allData.substring(4,6),16));
+        mDataManagerModel.updateFlame(TO_MUSIC, Integer.parseInt(allData.substring(6,8),16)-1);
+        mDataManagerModel.updateFlame(SPEED,Integer.parseInt(allData.substring(8,10),16));
+//        mDataManagerModel.setMainVolume(Integer.parseInt(allData[5],16));
+//        EventBus.getDefault().post(new PlayVolumeEvent(Integer.parseInt(allData[5],16)));
+    }
+
+    @Override
+    public void changeSwitch(int statue) {
+        mDataManagerModel.updateFlame(LIGHT_STATUE,statue);
+        EventBus.getDefault().post(new FlameEvent(LIGHT_STATUE,statue));
     }
 }

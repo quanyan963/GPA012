@@ -1,6 +1,9 @@
 package com.txtled.gp_a012.menu;
 
+import android.bluetooth.BluetoothA2dp;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,20 +12,25 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.txtled.gp_a012.R;
 import com.txtled.gp_a012.base.MvpBaseActivity;
 import com.txtled.gp_a012.bean.Song;
+import com.txtled.gp_a012.bean.event.FlameEvent;
 import com.txtled.gp_a012.bean.event.MusicServiceEvent;
 import com.txtled.gp_a012.bean.event.PlayVolumeEvent;
 import com.txtled.gp_a012.main.MainActivity;
@@ -33,6 +41,7 @@ import com.txtled.gp_a012.menu.service.ConnBleService;
 import com.txtled.gp_a012.music.service.MusicInterface;
 import com.txtled.gp_a012.music.service.MusicService;
 import com.txtled.gp_a012.utils.AlertUtils;
+import com.txtled.gp_a012.utils.BluetoothTools;
 import com.txtled.gp_a012.utils.Constants;
 import com.txtled.gp_a012.utils.Utils;
 import com.txtled.gp_a012.widget.CustomButton;
@@ -50,12 +59,21 @@ import java.util.Observer;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.txtled.gp_a012.utils.BleUtils.OPEN_CLOSE;
+import static com.txtled.gp_a012.utils.BleUtils.POWER_REQ;
+import static com.txtled.gp_a012.utils.BleUtils.REQUEST_REQ;
+import static com.txtled.gp_a012.utils.Constants.LIGHT;
+import static com.txtled.gp_a012.utils.Constants.LIGHT_STATUE;
+import static com.txtled.gp_a012.utils.Constants.POWER;
+import static com.txtled.gp_a012.utils.Constants.SPEED;
+import static com.txtled.gp_a012.utils.Constants.TO_MUSIC;
+
 /**
  * Created by Mr.Quan on 2018/4/19.
  */
 
 public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements MenuContract.View,
-        View.OnClickListener, Observer{
+        View.OnClickListener, Observer {
     @BindView(R.id.tv_title)
     CustomTextView tvTitle;
     @BindView(R.id.iv_right)
@@ -70,7 +88,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
     CustomButton rbFlame;
     @BindView(R.id.rb_setting)
     CustomButton rbSetting;
-//    @BindView(R.id.radio_group_other)
+    //    @BindView(R.id.radio_group_other)
 //    RadioGroup radioGroup;
     @BindView(R.id.dl_menu)
     DrawerLayout dlMenu;
@@ -109,6 +127,8 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
     private static final int REQUEST_CODE_CONN_BLE = 4;
     private boolean isConn;
     private int mVolume;
+    private boolean toSetting = true;
+    private boolean isMusic;
 
     @Override
     public void setInject() {
@@ -152,13 +172,120 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
         mIlAbout.setOnClickListener(this);
         mHeadBack.setOnClickListener(this);
         showSnackBar(dlMenu, R.string.dis_conn);
+        initSPPService();
     }
+
+    private void initSPPService() {
+
+    }
+
+    private BroadcastReceiver mBluetoothReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, final Intent intent) {
+
+            //如果找到蓝牙设备
+//            if(BluetoothDevice.ACTION_ACL_CONNECTED.equals(intent.getAction())){
+//                Intent succIntent = new Intent();
+//                Bundle mBundle = new Bundle();
+//                mBundle.putParcelable("Pairing_Succ",mLastBluetoothDevice);
+//                succIntent.setAction(BluetoothTools.ACTION_PAIRING_SUCC);
+//                succIntent.putExtras(mBundle);
+//                sendBroadcast(succIntent);
+//            }
+
+
+            //如果收到数据
+            if (BluetoothTools.ACTION_RECEIVE_DATA.equals(intent.getAction())) {
+                String mData = ((String) intent.getExtras().get("recData")).trim();
+
+                switch (mData.substring(5, 6)) {
+                    case POWER_REQ:
+                        String num = mData.substring(6, 8);
+                        if (num.equals("03")) {//脉动音乐
+                            presenter.toMusic();
+                        } else {//1~2
+                            presenter.changePower(Integer.parseInt(num) - 1);
+                        }
+                        break;
+                    case REQUEST_REQ://返回所有数据
+                        String allData = mData.substring(8, mData.length());
+                        presenter.allData(mData.substring(8, mData.length()));
+
+                        break;
+                    case OPEN_CLOSE://开灯
+                        String statue = mData.substring(6, 8);
+                        presenter.changeSwitch(Integer.parseInt(statue, 16));
+                        break;
+
+                }
+            }
+
+
+            //如果连接失败
+            if (BluetoothTools.ACTION_CONNECT_ERROR.equals(intent.getAction())) {
+                //Toast.makeText(context,"连接失败",Toast.LENGTH_SHORT).show();
+                toolbar.setNavigationIcon(R.mipmap.ic_state_disconnect);
+                AlertUtils.showAlertDialog(MainMenuActivity.this, R.string.conn_failure, new DialogInterface.
+                        OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        presenter.checkBlePermission(true, MainMenuActivity.this);
+                    }
+                });
+            }
+
+
+            //如果连接成功
+            if (BluetoothTools.ACTION_CONNECT_SUC.equals(intent.getAction())) {
+                isConn = true;
+                hidBar();
+                hideProgress();
+                toolbar.setNavigationIcon(R.mipmap.ic_state_connect);
+            }
+
+            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
+                int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
+                switch (blueState) {
+                    case BluetoothAdapter.STATE_TURNING_OFF:
+                        //关闭蓝牙
+
+                        setBleStatue(false);
+                        break;
+                }
+
+            }
+
+            if (intent.getAction().equals(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED)) {
+                int state = intent.getIntExtra(BluetoothA2dp.EXTRA_STATE, BluetoothA2dp.STATE_DISCONNECTED);
+                switch (state){
+                    case BluetoothA2dp.STATE_DISCONNECTED:
+                        //断开音频连接
+                        setBleStatue(false);
+                        break;
+                }
+                //Log.i(TAG,"connect state="+state);
+            }
+        }
+    };
 
     private void initBleService() {
         mBleServiceConn = new MyBleServiceConn();
         mBleIntent = new Intent(this, ConnBleService.class);
         startService(mBleIntent);
         bindService(mBleIntent, mBleServiceConn, BIND_AUTO_CREATE);
+
+        //注册广播
+        IntentFilter discoveryFilter = new IntentFilter();
+        discoveryFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        discoveryFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        discoveryFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        discoveryFilter.addAction(BluetoothDevice.ACTION_FOUND);
+        discoveryFilter.addAction(BluetoothTools.ACTION_CONNECT_ERROR);
+        discoveryFilter.addAction(BluetoothTools.ACTION_CONNECT_SUC);
+        discoveryFilter.addAction(BluetoothTools.ACTION_RECEIVE_DATA);
+        discoveryFilter.addAction(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED);
+        registerReceiver(mBluetoothReceiver, discoveryFilter);
     }
 
     public void initService() {
@@ -177,52 +304,15 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
                 toolbar.setNavigationIcon(isConn ? R.mipmap.ic_state_connect : R.mipmap.ic_state_disconnect);
             }
         });
-        if (!isConn)
+        if (!isConn && toSetting)
             presenter.checkBlePermission(false, this);
     }
-
-    private IntentFilter makeFilter() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        return filter;
-    }
-
-//    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            //LogUtil.e(TAG, "onReceive---------");
-//            switch (intent.getAction()) {
-//                case BluetoothAdapter.ACTION_STATE_CHANGED:
-//                    int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
-//                    switch (blueState) {
-////                        case BluetoothAdapter.STATE_TURNING_ON:
-////                            Utils.Logger("onReceive","onReceive","STATE_TURNING_ON");
-////                            break;
-////                        case BluetoothAdapter.STATE_ON:
-////                            Utils.Logger("onReceive","onReceive","STATE_ON");
-////                            break;
-//                        case BluetoothAdapter.STATE_TURNING_OFF:
-//
-//                            Utils.Logger("onReceive","onReceive","STATE_TURNING_OFF");
-//                            break;
-////                        case BluetoothAdapter.STATE_OFF:
-////                            Utils.Logger("onReceive","onReceive","STATE_OFF");
-////                            break;
-//                    }
-//                    break;
-//            }
-//        }
-//    };
 
     private class MyServiceConn implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             musicInterface = (MusicInterface) iBinder;
             musicInterface.initPlayer(mPosition);
-            if (isConn){
-                hideSnackBar();
-            }
         }
 
         @Override
@@ -266,7 +356,8 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
         } else {
             mPosition = -1;
         }
-
+        isMusic = true;
+        hidBar();
     }
 
     @Override
@@ -300,6 +391,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
         } else if (requestCode == REQUEST_CODE_OPEN_BLE && resultCode == RESULT_OK) {
             presenter.checkBlePermission(true, this);
         } else if (requestCode == REQUEST_CODE_CONN_BLE) {
+            toSetting = true;
             presenter.checkBlePermission(true, this);
         }
     }
@@ -339,6 +431,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
 
     @Override
     public void scanFailure() {
+        presenter.unConn();
         AlertUtils.showAlertDialog(this, getString(R.string.turn_on_device));
         //tvConnState.setText(R.string.turn_on_device);
         hideProgress();
@@ -358,14 +451,36 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
 
     @Override
     public void connected() {
-        musicInterface.initRead();
+        //musicInterface.initRead();
         isConn = true;
-        hideSnackBar();
+        hidBar();
         hideProgress();
         //this.registerReceiver(mReceiver,makeFilter());
 
         //toolbar.setNavigationIcon(R.mipmap.ic_state_connect);
         //presenter.getBleConnectedStatue();
+    }
+    private void hidBar(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isConn && isMusic){
+                    hideSnackBar();
+                }else if (!isConn){
+                    if (snackbar == null) {
+                        showSnackBar(dlMenu,R.string.dis_conn);
+                    }else {
+                        snackbar.setText(R.string.dis_conn);
+                    }
+                }else if (!isMusic){
+                    if (snackbar == null) {
+                        showSnackBar(dlMenu,R.string.scan);
+                    }else {
+                        snackbar.setText(R.string.scan);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -380,6 +495,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
         }, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                toSetting = false;
                 Intent intent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
                 startActivityForResult(intent, REQUEST_CODE_CONN_BLE);
             }
@@ -405,7 +521,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
             mConnBleInterface.addObserver(MainMenuActivity.this);
             mConnBleInterface.scanBle();
 
-        }else {
+        } else {
             //presenter.getBleConnectedStatue();
 
         }
@@ -423,7 +539,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
 
     @Override
     public void hideProgress() {
-        if (progressBar.getVisibility() == View.VISIBLE){
+        if (progressBar.getVisibility() == View.VISIBLE) {
             progressBar.setVisibility(View.GONE);
         }
     }
@@ -448,7 +564,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
                 mVolume = 16;
             EventBus.getDefault().post(new PlayVolumeEvent(mVolume));
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, Math.round(mVolume * everyValue), 0);
-            presenter.volumeChange(mVolume);
+            presenter.volumeChange(mVolume, this);
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             mVolume = Utils.getSoundValue(mAudioManager.
@@ -457,7 +573,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
                 mVolume = 0;
             EventBus.getDefault().post(new PlayVolumeEvent(mVolume));
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, Math.round(mVolume * everyValue), 0);
-            presenter.volumeChange(mVolume);
+            presenter.volumeChange(mVolume, this);
             return true;
         } else if (dlMenu.isDrawerOpen(nav)) {
             dlMenu.closeDrawer(nav);
@@ -475,7 +591,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
             unbindService(mServiceConn);
             stopService(mIntent);
         }
-        if (mBleServiceConn != null){
+        if (mBleServiceConn != null) {
             unbindService(mBleServiceConn);
             stopService(mBleIntent);
         }
@@ -503,7 +619,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
         if (!event.isVolume() && !event.getMusicState() && musicInterface.isPlaying()) {
             musicInterface.pausePlay(-1);
         }
-        if (event.isVolume()){
+        if (event.isVolume()) {
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
                     Math.round(mVolume * everyValue), 0);
             isConn = true;

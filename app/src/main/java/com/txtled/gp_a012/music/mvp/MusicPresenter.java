@@ -2,6 +2,8 @@ package com.txtled.gp_a012.music.mvp;
 
 
 
+import android.content.Context;
+
 import com.txtled.gp_a012.R;
 import com.txtled.gp_a012.base.RxPresenter;
 import com.txtled.gp_a012.bean.Song;
@@ -59,8 +61,8 @@ public class MusicPresenter extends RxPresenter<MusicContract.View> implements M
 
 
     @Override
-    public void operateVolume(int volume) {
-        mDataManagerModel.writeCommand(BleUtils.getSound(volume));
+    public void operateVolume(int volume, Context context) {
+        mDataManagerModel.writeCommand(BleUtils.getSound(volume),context);
         Utils.Logger(TAG,"getSound",BleUtils.getSound(volume));
         EventBus.getDefault().post(new PlayVolumeEvent(volume));
     }

@@ -2,9 +2,14 @@ package com.txtled.gp_a012.model.ble;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.bluetooth.BluetoothA2dp;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.inuker.bluetooth.library.BluetoothClient;
 import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
@@ -21,6 +26,7 @@ import com.inuker.bluetooth.library.search.SearchResult;
 import com.inuker.bluetooth.library.search.response.SearchResponse;
 import com.txtled.gp_a012.application.MyApplication;
 import com.txtled.gp_a012.utils.BleUtils;
+import com.txtled.gp_a012.utils.BluetoothTools;
 import com.txtled.gp_a012.utils.Utils;
 import com.txtled.gp_a012.widget.listener.BleConnListener;
 
@@ -43,8 +49,8 @@ import static com.inuker.bluetooth.library.Constants.STATUS_DISCONNECTED;
 
 public class BleHelperImpl implements BleHelper {
     public static final String TAG = BleHelperImpl.class.getSimpleName();
-    public static final int DURATION = 20000;
-    public static final int TIMES = 1;
+    public static final int DURATION = 10000;
+    public static final int TIMES = 3;
     private BluetoothClient mBleClient;
     private SearchRequest mRequest;
     private BleConnectOptions mOptions;
@@ -94,21 +100,20 @@ public class BleHelperImpl implements BleHelper {
                                     boolean isConnected = (boolean) isConnectedMethod.invoke(device, (
                                             Object[]) null);
                                     if (isConnected) {
+                                        onScanBleListener.onStart();
                                         Utils.Logger(TAG,"phone connected ble mac:",device.getAddress());
-//                                        BluetoothDevice romoteDevice = adapter.getRemoteDevice(device.getAddress());
-//                                        socket = romoteDevice
-//                                                .createRfcommSocketToServiceRecord(UUID.fromString(SPP_UUID));
-//                                        try {
-//                                            socket.connect();
-//                                            onScanBleListener.onSuccess();
-//                                            //Toast.makeText(this, "connect success", Toast.LENGTH_SHORT).show();
-//                                        } catch (IOException e2) {
-//                                            e2.printStackTrace();
-//                                            onScanBleListener.onScanFailure();
-//                                            //Toast.makeText(this, "connect failed", Toast.LENGTH_SHORT).show();
-//                                        }
+                                        Intent succIntent = new Intent();
+                                        Bundle mBundle = new Bundle();
+                                        mBundle.putParcelable("Pairing_Succ",device);
+                                        succIntent.setAction(BluetoothTools.ACTION_PAIRING_SUCC);
+                                        succIntent.putExtras(mBundle);
+                                        activity.sendBroadcast(succIntent);
+
+                                        //socket.connect();
+                                        connectA2DP(adapter,activity,device);
+                                        //onScanBleListener.onSuccess();
                                         //ble蓝牙连接
-                                        searchBleByAddress(device.getAddress(), onScanBleListener,onConnBleListener);
+                                        //searchBleByAddress(device.getAddress(), onScanBleListener,onConnBleListener);
                                     }
                                 }
                             }
@@ -140,6 +145,66 @@ public class BleHelperImpl implements BleHelper {
         }
     }
 
+    private void connectA2DP(BluetoothAdapter adapter,Activity activity,BluetoothDevice device) {
+        if(adapter.getProfileConnectionState(BluetoothProfile.A2DP)!=BluetoothProfile.STATE_CONNECTED){
+            //在listener中完成A2DP服务的调用
+            adapter.getProfileProxy(activity, new connServListener(device), BluetoothProfile.A2DP);
+        }
+    }
+
+    public class connServListener implements BluetoothProfile.ServiceListener {
+        private BluetoothDevice device;
+
+        public connServListener(BluetoothDevice device) {
+            this.device = device;
+        }
+
+        @Override
+        public void onServiceConnected(int profile, BluetoothProfile proxy) {
+            //use reflect method to get the Hide method "connect" in BluetoothA2DP
+            BluetoothA2dp a2dp = (BluetoothA2dp) proxy;
+            //a2dp.isA2dpPlaying(mBTDevInThread);
+            Class<? extends BluetoothA2dp> clazz = a2dp.getClass();
+            Method method_Connect;
+            //通过BluetoothA2DP隐藏的connect(BluetoothDevice btDev)函数，打开btDev的A2DP服务
+            try {
+
+                          /*
+                           * 1.Reflect this method
+                             public boolean connect(BluetoothDevice device);
+                           *
+                           * 2.function definition
+                             getMethod(String methodName, Class <?>... paramType)
+                           */
+                //1.这步相当于定义函数
+                method_Connect = clazz.getMethod("connect",BluetoothDevice.class);
+                //invoke(object receiver,object... args)
+                //2.这步相当于调用函数,invoke需要传入args：BluetoothDevice的实例
+                method_Connect.invoke(a2dp, device);
+            } catch (NoSuchMethodException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        public void onServiceDisconnected(int profile) {
+            // TODO Auto-generated method stub
+
+        }
+
+    }
+
     private void searchBleByAddress(final String address, final OnScanBleListener onScanBleListener, final OnConnBleListener onConnBleListener) {
         if (!conn){
             mBleClient.search(mRequest, new SearchResponse() {
@@ -153,10 +218,11 @@ public class BleHelperImpl implements BleHelper {
                     Utils.Logger(TAG,"scan ble name",device.getName());
                     Utils.Logger(TAG,"scan ble mac",device.getAddress());
                     String broadcastPack =Utils.bytesToHex(device.scanRecord);
-                    String[] values = broadcastPack.split("03FF");
+                    String[] values = broadcastPack.split("FF");
                     if (values.length == 2){
-                        broadcastPack = values[1].toString().substring(0,4);
-                        if (address.replace(":","").contains(broadcastPack)){//device.getAddress().substring(8))
+                        broadcastPack = values[1].toString().substring(0,12);
+                        //broadcastPack = values[1].toString().substring(0,4);
+                        if (address.replace(":","").equals(broadcastPack)){//device.getAddress().substring(8))
                             mBleClient.stopSearch();
 
                             //broadcastPack = Utils.asciiToString(broadcastPack.substring(0,62));
@@ -236,82 +302,47 @@ public class BleHelperImpl implements BleHelper {
     }
 
     @Override
-    public void writeCommand(String command) {
-        if (mServiceUUID != null && mSendCharacterUUID != null) {
-            divideFrameBleSendData(command.getBytes());
-        }
+    public void writeCommand(String command, Context context) {
+//        if (mServiceUUID != null && mSendCharacterUUID != null) {
+//            divideFrameBleSendData(command.getBytes(),context);
+//        }
+        divideFrameBleSendData(command.getBytes(),context);
     }
 
     //分包
 
-    private void divideFrameBleSendData(byte[] data) {
+    private void divideFrameBleSendData(byte[] data,Context context) {
         Utils.Logger(TAG,"BLE Write Command",new String(data));
         int tmpLen = data.length;
         int start = 0;
         int end = 0;
-        while (tmpLen > 0) {
-            byte[] sendData = new byte[21];
-            if (tmpLen >= 20) {
-                end += 20;
-                sendData = Arrays.copyOfRange(data, start, end);
-                start += 20;
-                tmpLen -= 20;
-            } else {
-                end += tmpLen;
-                sendData = Arrays.copyOfRange(data, start, end);
-                tmpLen = 0;
-            }
-
-            mBleClient.write(mAddress, mServiceUUID, mSendCharacterUUID, sendData,
-                    new BleWriteResponse() {
-                        @Override
-                        public void onResponse(int code) {
-
-                        }
-                    });
-
-        }
-
-        //spp
-//        try {
-//            OutputStream os = socket.getOutputStream();
-////            byte[] osBytes = etInput.getText().toString().getBytes();
-////            for (int i = 0; i < data.length; i++) {
-////                if (osBytes[i] == 0x0a)
-////                    n++;
-////            }
-////            byte[] osBytesNew = new byte[osBytes.length+n];
-////            n = 0;
-////            for (int i = 0; i < osBytesNew.length; i++) {
-////                //mobile "\n"is 0a,modify 0d 0a then send
-////                if (osBytesNew[i] == 0x0a) {
-////                    osBytesNew[n] = 0x0d;
-////                    n++;
-////                    osBytesNew[n] = 0x0a;
-////                }else {
-////                    osBytesNew[n] = osBytes[i];
-////                }
-////                n++;
-////            }
-//            while (tmpLen > 0) {
-//                byte[] sendData = new byte[21];
-//                if (tmpLen >= 20) {
-//                    end += 20;
-//                    sendData = Arrays.copyOfRange(data, start, end);
-//                    start += 20;
-//                    tmpLen -= 20;
-//                } else {
-//                    end += tmpLen;
-//                    sendData = Arrays.copyOfRange(data, start, end);
-//                    tmpLen = 0;
-//                }
-//
-//                os.write(sendData);
+//        while (tmpLen > 0) {
+//            byte[] sendData = new byte[21];
+//            if (tmpLen >= 20) {
+//                end += 20;
+//                sendData = Arrays.copyOfRange(data, start, end);
+//                start += 20;
+//                tmpLen -= 20;
+//            } else {
+//                end += tmpLen;
+//                sendData = Arrays.copyOfRange(data, start, end);
+//                tmpLen = 0;
 //            }
 //
-//        } catch (Exception e) {
-//            e.printStackTrace();
+//            mBleClient.write(mAddress, mServiceUUID, mSendCharacterUUID, sendData,
+//                    new BleWriteResponse() {
+//                        @Override
+//                        public void onResponse(int code) {
+//
+//                        }
+//                    });
+//
 //        }
+
+        //spp
+        Intent actIntent = new Intent(BluetoothTools.ACTION_DATA_TO_GAME);
+        actIntent.putExtra("editViewData",data);
+        context.sendBroadcast(actIntent);
     }
 
     @Override
@@ -359,15 +390,6 @@ public class BleHelperImpl implements BleHelper {
             }
         });
 
-        //spp
-//        try {
-//            byte[] read = new byte[21];
-//            InputStream inputStream = socket.getInputStream();
-//            socket.getInputStream().read(read);
-//            readListener.onRead(read);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override
@@ -376,14 +398,5 @@ public class BleHelperImpl implements BleHelper {
         mBleClient.unregisterConnectStatusListener(mAddress,listener);
         listener = null;
         conn = false;
-
-//        try {
-//            socket.close();
-//            socket = null;
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            //Toast.makeText(this, "socket close failed", Toast.LENGTH_SHORT).show();
-//        }
-//        return;
     }
 }
