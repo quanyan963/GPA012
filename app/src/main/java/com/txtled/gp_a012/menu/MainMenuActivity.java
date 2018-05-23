@@ -247,9 +247,12 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
             if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
                 int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
                 switch (blueState) {
-                    case BluetoothAdapter.STATE_TURNING_OFF:
+                    case BluetoothAdapter.STATE_OFF:
                         //关闭蓝牙
 
+                        if (musicInterface.isPlaying()){
+                            musicInterface.pausePlay(-1);
+                        }
                         setBleStatue(false);
                         break;
                 }
@@ -261,6 +264,9 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
                 switch (state){
                     case BluetoothA2dp.STATE_DISCONNECTED:
                         //断开音频连接
+                        if (musicInterface.isPlaying()){
+                            musicInterface.pausePlay(-1);
+                        }
                         setBleStatue(false);
                         break;
                 }
