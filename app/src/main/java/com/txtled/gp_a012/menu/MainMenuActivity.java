@@ -591,7 +591,6 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         hideProgress();
         if (mServiceConn != null) {
             unbindService(mServiceConn);
@@ -601,6 +600,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
             unbindService(mBleServiceConn);
             stopService(mBleIntent);
         }
+        super.onDestroy();
         //this.unregisterReceiver(mReceiver);
     }
 
