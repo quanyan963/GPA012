@@ -2,6 +2,7 @@ package com.txtled.gp_a012.music.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
@@ -316,10 +317,9 @@ public class MusicService extends Service implements BleHelper.OnReadListener{
         return previousPosition;
     }
 
-
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void unbindService(ServiceConnection conn) {
+        super.unbindService(conn);
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             mMediaPlayer.release();
@@ -330,6 +330,13 @@ public class MusicService extends Service implements BleHelper.OnReadListener{
                 EventBus.getDefault().unregister(this);
             }
         }
+        stopSelf();
+    }
+
+    @Override
+    public void onDestroy() {
+
+        super.onDestroy();
     }
 
 }

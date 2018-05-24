@@ -386,17 +386,6 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
         }
     }
 
-//    @Override
-//    public void onEventFlameThread(FlameEvent flameEvent) {
-//        super.onEventFlameThread(flameEvent);
-//        if (flameEvent.getType().equals(LIGHT_STATUE)){
-//            //开关灯
-//            isReq = true;
-//            Check.setChecked(flameEvent.getLightStatue() == 0 ? false : true);
-//            isReq = false;
-//        }
-//    }
-
     public void changeSwitch(final int id){
         isReq = true;
         runOnUiThread(new Runnable() {
@@ -413,15 +402,6 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
         tvMusicPlayer.setText(song.getSinger());
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mServiceConn != null) {
-            unbindService(mServiceConn);
-            stopService(mIntent);
-        }
-    }
-
     public int getFragmentPage() {
         return mFragmentPage;
     }
@@ -433,5 +413,14 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
     @Override
     public void setInject() {
         getActivityComponent().inject(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mServiceConn != null) {
+            unbindService(mServiceConn);
+            stopService(mIntent);
+        }
+        super.onDestroy();
     }
 }

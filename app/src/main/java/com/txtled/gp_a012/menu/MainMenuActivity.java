@@ -601,7 +601,6 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
             stopService(mBleIntent);
         }
         super.onDestroy();
-        //this.unregisterReceiver(mReceiver);
     }
 
     @Override

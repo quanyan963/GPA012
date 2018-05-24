@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -223,13 +224,19 @@ public class ConnBleService extends Service {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void unbindService(ServiceConnection conn) {
+        super.unbindService(conn);
         mConnBleObservable.deleteObservers();
         mConnBleObservable = null;
         stopTimer();
         communThread.cancel();
-        stopSelf();
         unregisterReceiver(controlReceiver);
+        stopSelf();
+    }
+
+    @Override
+    public void onDestroy() {
+
+        super.onDestroy();
     }
 }
