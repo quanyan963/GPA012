@@ -571,7 +571,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
             EventBus.getDefault().post(new PlayVolumeEvent(mVolume));
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
                     Math.round(mVolume * everyValue), AudioManager.FLAG_SHOW_UI);
-            presenter.volumeChange(mVolume, this);
+            presenter.volumeChange(mVolume, this, isConn);
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             mVolume = Utils.getSoundValue(mAudioManager.
@@ -581,7 +581,7 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
             EventBus.getDefault().post(new PlayVolumeEvent(mVolume));
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
                     Math.round(mVolume * everyValue), AudioManager.FLAG_SHOW_UI);
-            presenter.volumeChange(mVolume, this);
+            presenter.volumeChange(mVolume, this, isConn);
             return true;
         } else if (dlMenu.isDrawerOpen(nav)) {
             dlMenu.closeDrawer(nav);
@@ -628,9 +628,9 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
         }
         if (event.isVolume()) {
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-                    Math.round(mVolume * everyValue), 0);
-            isConn = true;
-            hideProgress();
+                    Math.round(mVolume * everyValue), AudioManager.FLAG_SHOW_UI);
+//            isConn = true;
+//            hideProgress();
         }
     }
 

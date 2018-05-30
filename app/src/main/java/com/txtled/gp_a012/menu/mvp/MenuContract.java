@@ -46,7 +46,7 @@ public interface MenuContract {
         void unConn();
         int getPlayPosition();
         void getBleConnectedStatue(Context context);
-        void volumeChange(int volume, Context context);
+        void volumeChange(int volume, Context context, boolean isConn);
         int getVolume();
         void checkChange(int checkId);
         void toMusic();

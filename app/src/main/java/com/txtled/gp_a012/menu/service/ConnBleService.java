@@ -74,9 +74,12 @@ public class ConnBleService extends Service {
 //                } catch (UnsupportedEncodingException e) {
 //                    e.printStackTrace();
 //                }
-                byte[] bytes = (byte[]) intent.getExtras().get("editViewData");
-                communThread.write(bytes);
+                try{
+                    byte[] bytes = (byte[]) intent.getExtras().get("editViewData");
+                    communThread.write(bytes);
+                }catch (Exception e){
 
+                }
             }
         }
     };
