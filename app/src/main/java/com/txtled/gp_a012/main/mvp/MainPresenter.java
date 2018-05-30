@@ -8,6 +8,7 @@ import com.txtled.gp_a012.base.RxPresenter;
 import com.txtled.gp_a012.bean.Flame;
 import com.txtled.gp_a012.bean.Song;
 import com.txtled.gp_a012.bean.event.FlameEvent;
+import com.txtled.gp_a012.bean.event.PlayVolumeEvent;
 import com.txtled.gp_a012.model.DataManagerModel;
 import com.txtled.gp_a012.utils.BleUtils;
 import com.txtled.gp_a012.utils.Utils;
@@ -99,6 +100,7 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
         mDataManagerModel.writeCommand(BleUtils.getSound(volume),context);
         Utils.Logger(TAG,"volumeChange",BleUtils.getSound(volume));
         mDataManagerModel.setMainVolume(volume);
+        EventBus.getDefault().post(new PlayVolumeEvent(volume));
     }
 
     @Override
@@ -109,5 +111,11 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
     @Override
     public Flame getFlame() {
         return mDataManagerModel.getFlame();
+    }
+
+    @Override
+    public void changeVolume(int volume) {
+        EventBus.getDefault().post(new PlayVolumeEvent(volume));
+        //mDataManagerModel.setMainVolume(volume);
     }
 }

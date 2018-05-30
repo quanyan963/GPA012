@@ -566,10 +566,11 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             mVolume = Utils.getSoundValue(mAudioManager.
                     getStreamVolume(AudioManager.STREAM_MUSIC) + 1, everyValue);
-            if (mVolume == 17)
+            if (mVolume > 16)
                 mVolume = 16;
             EventBus.getDefault().post(new PlayVolumeEvent(mVolume));
-            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, Math.round(mVolume * everyValue), 0);
+            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
+                    Math.round(mVolume * everyValue), AudioManager.FLAG_SHOW_UI);
             presenter.volumeChange(mVolume, this);
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
@@ -578,7 +579,8 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
             if (mVolume == -1)
                 mVolume = 0;
             EventBus.getDefault().post(new PlayVolumeEvent(mVolume));
-            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, Math.round(mVolume * everyValue), 0);
+            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
+                    Math.round(mVolume * everyValue), AudioManager.FLAG_SHOW_UI);
             presenter.volumeChange(mVolume, this);
             return true;
         } else if (dlMenu.isDrawerOpen(nav)) {

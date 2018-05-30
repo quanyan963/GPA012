@@ -34,6 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public Snackbar snackbar;
     public AudioManager mAudioManager;
     public float everyValue;
+    public int maxVolume;
 
     public abstract void init();
 
@@ -48,7 +49,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        everyValue = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)/16f;
+        maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        everyValue = maxVolume / 16f;
         mApplication = MyApplication.getInstance();
         addActivity();
         onCreateView();

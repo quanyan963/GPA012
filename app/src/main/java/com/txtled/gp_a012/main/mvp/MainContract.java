@@ -40,5 +40,6 @@ public interface MainContract {
         void volumeChange(int volume, Context context);
         int getVolume();
         Flame getFlame();
+        void changeVolume(int volume);
     }
 }

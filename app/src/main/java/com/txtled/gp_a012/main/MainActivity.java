@@ -275,14 +275,14 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP){
             mVolume = Utils.getSoundValue(mAudioManager.
                     getStreamVolume(AudioManager.STREAM_MUSIC)+1,everyValue);
-            mVolume = mVolume == 17 ? 16 : mVolume;
+            if (mVolume > 16)
+                mVolume = 16;
             EventBus.getDefault().post(new PlayVolumeEvent(mVolume));
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-                    Math.round(mVolume * everyValue),0);
+                    Math.round(mVolume * everyValue),AudioManager.FLAG_SHOW_UI);
             presenter.volumeChange(mVolume,this);
         }else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
             mVolume = Utils.getSoundValue(mAudioManager.
@@ -290,19 +290,20 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
             mVolume = mVolume == -1 ? 0 : mVolume;
             EventBus.getDefault().post(new PlayVolumeEvent(mVolume));
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-                    Math.round(mVolume * everyValue),0);
+                    Math.round(mVolume * everyValue),AudioManager.FLAG_SHOW_UI);
             presenter.volumeChange(mVolume,this);
         }
-        if (mCurrentFragment instanceof MusicFragment){
-            if (keyCode == KeyEvent.KEYCODE_BACK){
-                return super.onKeyDown(keyCode, event);
-            }else {
-                ((MusicFragment)mCurrentFragment).onKeyDown(mVolume);
-                return true;
-            }
-        }else {
-            return super.onKeyDown(keyCode, event);
-        }
+        return super.onKeyDown(keyCode, event);
+//        if (mCurrentFragment instanceof MusicFragment){
+//            if (keyCode == KeyEvent.KEYCODE_BACK){
+//                return super.onKeyDown(keyCode, event);
+//            }else {
+//                presenter.changeVolume(mVolume);
+//                return true;
+//            }
+//        }else {
+//            return super.onKeyDown(keyCode, event);
+//        }
     }
 
     @Override
@@ -317,15 +318,6 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
                 super.onBackPressed();
             }
         }
-//        else {
-//            if (mFragmentPage == WEEK_SPA) {
-//                switchSpaSoundsView();
-//            } else if (mFragmentPage == FIRST_ALARM || mFragmentPage == SECOND_ALARM) {
-//                switchAlarmView();
-//            } else if (mFragmentPage == RADIO_STATION) {
-//                switchRadioView();
-//            }
-//        }
     }
 
     @Override
@@ -382,7 +374,7 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
         }
         if (event.isVolume()){
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-                    Math.round(mVolume * everyValue), 0);
+                    Math.round(mVolume * everyValue), AudioManager.FLAG_SHOW_UI);
         }
     }
 
