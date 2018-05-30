@@ -56,7 +56,7 @@ public class MainPresenter extends RxPresenter<MainContract.View> implements Mai
                 view.showPopMusicList(mDataManagerModel.getMusicInfoList());
                 break;
             case R.id.iv_right:
-                if (type == R.id.rb_music) {
+                if (type == 1) {
                     view.showPopMusicList(mDataManagerModel.getMusicInfoList());
                 } else {
                     view.showDrawerOpen();

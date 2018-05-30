@@ -181,7 +181,7 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
         return Utils.changeViewColor(v, event, this, new ViewClickListener() {
             @Override
             public void getViewId(int id) {
-                presenter.onClick(id,rb_id);
+                presenter.onClick(id,mCurrentFragment.getClass().equals(MusicFragment.class) ? 1 : 0);
             }
         });
     }
@@ -331,7 +331,7 @@ public class MainActivity extends MvpBaseActivity<MainPresenter> implements Main
     @Override
     @OnClick({R.id.iv_play, R.id.iv_list})
     public void onClick(View v) {
-        presenter.onClick(v.getId(),rb_id);
+        presenter.onClick(v.getId(),mCurrentFragment.getClass().equals(MusicFragment.class) ? 1 : 0);
     }
 
     @Override

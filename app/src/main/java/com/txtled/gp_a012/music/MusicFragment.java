@@ -218,9 +218,13 @@ public class MusicFragment extends MvpBaseFragment<MusicPresenter> implements Mu
             Song song = mSongList.get(mPosition);
             initPlayUi(song);
         }
-        mtvCountTime.setText(Utils.getShowTime(progress));
-        mtvSurplusTime.setText("-" + Utils.getShowTime(mDuration - progress));
+
         int a = getMusicInterface().isPlaying() ? 1 : 0;
+        if (a == 1){
+            mtvCountTime.setText(Utils.getShowTime(progress));
+            mtvSurplusTime.setText("-" + Utils.getShowTime(mDuration - progress));
+            csbRound.setProgress(progress);
+        }
         if (mIsUpdateImg != a) {
             mIsUpdateImg = a;
             ivPlay.setImageResource(getMusicInterface().isPlaying() ?
@@ -230,7 +234,6 @@ public class MusicFragment extends MvpBaseFragment<MusicPresenter> implements Mu
                     R.mipmap.ic_music_pause :
                     R.mipmap.ic_music_play);
         }
-        csbRound.setProgress(progress);
     }
 
     private void initPlayUi(Song song) {
