@@ -62,7 +62,7 @@ public class MusicPresenter extends RxPresenter<MusicContract.View> implements M
 
     @Override
     public void operateVolume(int volume, Context context) {
-        mDataManagerModel.writeCommand(BleUtils.getSound(volume),context);
+        //mDataManagerModel.writeCommand(BleUtils.getSound(volume),context);
         Utils.Logger(TAG,"getSound",BleUtils.getSound(volume));
         EventBus.getDefault().post(new PlayVolumeEvent(volume));
     }

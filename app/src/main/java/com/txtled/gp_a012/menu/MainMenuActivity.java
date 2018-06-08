@@ -569,20 +569,20 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
             if (mVolume > 16)
                 mVolume = 16;
             EventBus.getDefault().post(new PlayVolumeEvent(mVolume));
-            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-                    Math.round(mVolume * everyValue), AudioManager.FLAG_SHOW_UI);
+//            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
+//                    Math.round(mVolume * everyValue), 0);
             presenter.volumeChange(mVolume, this, isConn);
-            return true;
+            return false;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             mVolume = Utils.getSoundValue(mAudioManager.
                     getStreamVolume(AudioManager.STREAM_MUSIC) - 1, everyValue);
             if (mVolume == -1)
                 mVolume = 0;
             EventBus.getDefault().post(new PlayVolumeEvent(mVolume));
-            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-                    Math.round(mVolume * everyValue), AudioManager.FLAG_SHOW_UI);
+//            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
+//                    Math.round(mVolume * everyValue), 0);
             presenter.volumeChange(mVolume, this, isConn);
-            return true;
+            return false;
         } else if (dlMenu.isDrawerOpen(nav)) {
             dlMenu.closeDrawer(nav);
             return false;
@@ -627,8 +627,8 @@ public class MainMenuActivity extends MvpBaseActivity<MenuPresenter> implements 
             musicInterface.pausePlay(-1);
         }
         if (event.isVolume()) {
-            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-                    Math.round(mVolume * everyValue), AudioManager.FLAG_SHOW_UI);
+//            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
+//                    Math.round(mVolume * everyValue), AudioManager.FLAG_SHOW_UI);
 //            isConn = true;
 //            hideProgress();
         }

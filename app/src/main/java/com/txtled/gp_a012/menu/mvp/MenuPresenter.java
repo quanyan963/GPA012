@@ -336,7 +336,7 @@ public class MenuPresenter extends RxPresenter<MenuContract.View> implements Men
     @Override
     public void volumeChange(int volume, Context context, boolean isConn) {
         if (isConn)
-            mDataManagerModel.writeCommand(BleUtils.getSound(volume),context);
+            //mDataManagerModel.writeCommand(BleUtils.getSound(volume),context);
         Utils.Logger(TAG,"volumeChange",BleUtils.getSound(volume));
         mDataManagerModel.setMainVolume(volume);
     }
