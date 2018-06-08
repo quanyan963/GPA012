@@ -34,6 +34,7 @@ public class StartActivity extends MvpBaseActivity<StartPresenter> implements St
             @Override
             public void run() {
                 startActivity(new Intent(StartActivity.this, MainMenuActivity.class));
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                 finish();
             }
         },1500);
